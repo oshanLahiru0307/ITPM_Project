@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
 const UserRoutes = require('./routers/UserRoutes')
+const CategoriesRouter = require('./routers/CategorisRouter')
 
 //midlewere...
 app.use((req,res,next,)=>{
@@ -11,6 +12,7 @@ app.use((req,res,next,)=>{
 })
 
 app.use('/api/user', UserRoutes )
+app.use('/api/category', CategoriesRouter )
 
 mongoose.connect(process.env.MONGO_URI)
 .then(
