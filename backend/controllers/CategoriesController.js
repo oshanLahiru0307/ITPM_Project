@@ -12,19 +12,19 @@ const getCategories = async (req, res)=> {
 }
 
 //get category...
-const getaCategory = async ()=> {
+const getaCategory = async (req,res)=> {
     const {id} = req.params
     try{
         const response = await Categories.findById(id)
         res.status(200).json(response)
     }catch(error){
-        re.status(400).json({error: error})
+        res.status(400).json({error: error})
     }
 
 }
 
 //addCategory...
-const addCategory = async ()=> {
+const addCategory = async (req,res)=> {
     const {name} = req.body
     try{
         const exist = await Categories.findOne(name)
@@ -32,7 +32,7 @@ const addCategory = async ()=> {
             const response = Categories.create({name})
             res.status(200).json(response)
         }else{
-            res.status(201).json({msg:"this category is all ready exist."})
+            res.status(400).json({msg:"this category is all ready exist."})
         }
         
     }catch(error){
@@ -41,31 +41,31 @@ const addCategory = async ()=> {
 }
 
 //updateCategory...
-const updateCategory = async ()=> {
+const updateCategory = async (req,res)=> {
     const {id} = req.params
     try{
         const response = await Categories.findByIdAndUpdate({_id:id}, {...req.body})
         res.status(200).json(response)
     }catch(error){
-        re.status(400).json({error: error})
+        res.status(400).json({error: error})
     }
 
 }
 
 //deleteCategory...
-const deleteCategory = async ()=> {
+const deleteCategory = async (req,res)=> {
     const {id} = req.params
     try{
         const response = await Categories.findByIdAndDelete({_id:id})
         res.status(200).json(response)
     }catch(error){
-        re.status(400).json({error: error})
+        res.status(400).json({error: error})
     }
 
 }
 
 
-module.export = {
+module.exports = {
     getCategories,
     getaCategory,
     addCategory,
