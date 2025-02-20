@@ -27,9 +27,9 @@ const getaCategory = async (req,res)=> {
 const addCategory = async (req,res)=> {
     const {name} = req.body
     try{
-        const exist = await Categories.findOne(name)
+        const exist = await Categories.findOne({name})
         if(!exist){
-            const response = Categories.create({name})
+            const response = await Categories.create({name})
             res.status(200).json(response)
         }else{
             res.status(400).json({msg:"this category is all ready exist."})

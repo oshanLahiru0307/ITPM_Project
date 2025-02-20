@@ -6,6 +6,7 @@ const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 
 //midlewere...
+app.use(express.json())
 app.use((req,res,next,)=>{
     console.log(req.path)
     next()
