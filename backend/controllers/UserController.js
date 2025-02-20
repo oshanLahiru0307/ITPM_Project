@@ -28,9 +28,9 @@ const getUsers = async (req,res)=> {
 //add user...
 const addUser = async (req,res)=> {
     const {name, email, password, phone, address} = req.body
-    const Password = bcrypt.hash(password, 10)
+    const Password = await bcrypt.hash(password, 10)
     try{
-        const exist = await UserSchema.findOne({emial:email})
+        const exist = await UserSchema.findOne({email:email})
         if(!exist){
             const response = await UserSchema.create({name, email, password:Password, phone, address})
             res.status(200).json(response)
