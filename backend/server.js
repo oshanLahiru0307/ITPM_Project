@@ -4,8 +4,11 @@ const express = require('express')
 const app = express()
 const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
+const cors = require('cors')
+
 
 //midlewere...
+app.use(cors)
 app.use(express.json())
 app.use((req,res,next,)=>{
     console.log(req.path)
