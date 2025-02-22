@@ -7,6 +7,7 @@ import {
   ShoppingCartOutlined,
   HeartOutlined,
   LogoutOutlined,
+  ProfileOutlined,
 } from '@ant-design/icons';
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
@@ -16,6 +17,7 @@ import Items from '../Components/Items'
 import Categories from '../Components/Categories'
 import Users from '../Components/UserDetails'
 import Donation from '../Components/Donation'
+import Profile from '../Components/Profile'
 
 const { Sider, Content, Header } = Layout;
 const { Title } = Typography;
@@ -39,9 +41,9 @@ const Dashbord = () => {
           Home Stock
         </Title>
 
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+        <Menu theme="dark" defaultSelectedKeys={['0']} mode="inline">
           <Menu.Item
-            key="1"
+            key="0"
             icon={<HomeOutlined/>}
             onClick={() => { state.activeIndex = 0; }}
             style={{ marginBottom: "15px" }} // Increased gap between items
@@ -49,7 +51,7 @@ const Dashbord = () => {
             Home
           </Menu.Item>
           <Menu.Item
-            key="2"
+            key="1"
             icon={<AppstoreOutlined />}
             onClick={() => { state.activeIndex = 1; }}
             style={{ marginBottom: "15px" }}
@@ -57,7 +59,7 @@ const Dashbord = () => {
             Items
           </Menu.Item>
           <Menu.Item
-            key="3"
+            key="2"
             icon={<ShoppingCartOutlined />}
             onClick={() => { state.activeIndex = 2; }}
             style={{ marginBottom: "15px" }}
@@ -65,7 +67,7 @@ const Dashbord = () => {
             Categories
           </Menu.Item>
           <Menu.Item
-            key="4"
+            key="3"
             icon={<UserOutlined />}
             onClick={() => { state.activeIndex = 3; }}
             style={{ marginBottom: "15px" }}
@@ -73,12 +75,20 @@ const Dashbord = () => {
             Users
           </Menu.Item>
           <Menu.Item
-            key="5"
+            key="4"
             icon={<HeartOutlined />}
-            onClick={() => { state.activeIndex = 3; }}
+            onClick={() => { state.activeIndex = 4; }}
             style={{ marginBottom: "15px" }}
           >
             Donation
+          </Menu.Item>
+          <Menu.Item
+            key="5"
+            icon={<ProfileOutlined />}
+            onClick={() => { state.activeIndex = 5; }}
+            style={{ marginBottom: "15px" }}
+          >
+            Profile
           </Menu.Item>
           <Menu.Item
             key="6"
@@ -92,24 +102,13 @@ const Dashbord = () => {
       </Sider>
 
       <Layout>
-        <Header
-          style={{
-            padding: "10px 20px",
-            background: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start'
-          }}
-        >
-          <h1 style={{ margin: 0, textAlign: 'left', flex: 1 }}>Users Details</h1>
-        </Header>
-
         <Content>
-          {snap.activeIndex === 1 && <Home/>}
-          {snap.activeIndex === 2 && <Items/>}
-          {snap.activeIndex === 3 && <Categories/>}
-          {snap.activeIndex === 4 && <Users/>}
-          {snap.activeIndex === 5 && <Donation/>}
+          {snap.activeIndex === 0 && <Home/>}
+          {snap.activeIndex === 1 && <Items/>}
+          {snap.activeIndex === 2 && <Categories/>}
+          {snap.activeIndex === 3 && <Users/>}
+          {snap.activeIndex === 4 && <Donation/>}
+          {snap.activeIndex === 5 && <Profile/>}
 
         </Content>
       </Layout>
