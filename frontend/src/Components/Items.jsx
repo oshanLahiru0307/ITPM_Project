@@ -85,8 +85,17 @@ const Items = () => {
   ];
 
   return (
-    <div>
-      <Button type="primary" style={{ margin: '10px' }} onClick={() => setModalVisible(true)}>
+    <div style={{
+      padding:'20px',
+      backgroundColor:'#F0F8FF',
+      minHeight:'100vh'
+    }}>
+      <h1>Items</h1>
+      <Button type="primary" 
+      style={{ 
+        marginBottom: '20px',
+        float:'right' }} 
+        onClick={() => setModalVisible(true)}>
         Add Item
       </Button>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Typography } from 'antd';
+import {Layout, Menu, Typography } from 'antd';
 import {
   HomeOutlined,
   UserOutlined,
@@ -28,12 +28,12 @@ const Dashbord = () => {
   const navigate = useNavigate();
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+    <Layout  style={{ minHeight: '100vh' }}>
+      <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <Title
           level={3}
           style={{
-            color: 'white',
+            color: '#007FFF',
             textAlign: 'center',
             marginBottom: '30px' // Increased gap below title
           }}
@@ -41,7 +41,7 @@ const Dashbord = () => {
           Home Stock
         </Title>
 
-        <Menu theme="dark" defaultSelectedKeys={['0']} mode="inline">
+        <Menu theme='light' defaultSelectedKeys={['0']} mode="inline">
           <Menu.Item
             key="0"
             icon={<HomeOutlined/>}

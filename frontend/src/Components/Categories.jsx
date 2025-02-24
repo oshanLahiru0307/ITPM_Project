@@ -37,9 +37,14 @@ const Categories = () => {
   ]
 
   return (
-    <div> 
+    <div
+    style={{
+      padding:'20px',
+      backgroundColor:'#F0F8FF',
+      minHeight:'100vh'
+    }}> 
       <Button type='primary' style={{
-        margin:'20px'
+        marginBlock:'20px'
       }}>Add Category</Button>
       <Table dataSource={categories} columns={columns}/>
     </div>

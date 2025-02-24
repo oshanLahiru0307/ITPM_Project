@@ -66,7 +66,10 @@ const UserDetails = () => {
       key: "action",
       render: (_, record) => (
         <span>
-          <Button type="primary" onClick={() => edit(record)}>Edit</Button>
+          <Button type="primary" onClick={() => edit(record)}
+            style={{
+              marginRight:'10px'
+            }}>Edit</Button>
           <Button type="primary" danger onClick={() => deleteUser(record)}>Delete</Button>
         </span>
       ),
@@ -74,9 +77,15 @@ const UserDetails = () => {
   ];
 
   return (
-    <div>
-      <Button type="primary" onClick={() => setModalVisible(true)} style={{
-        margin:"15px"
+    <div style={{
+      padding:'20px',
+      backgroundColor:'#F0F8FF',
+      minHeight:'100vh'
+    }}>
+      <Button type="primary" onClick={() => setModalVisible(true)} 
+      style={{
+        marginBottom:"20px",
+        float:'left'
       }}>Add User</Button>
       <Table dataSource={users} columns={columns} rowKey="_id" />
 
