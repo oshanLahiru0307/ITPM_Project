@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserController from '../Services/UserController';
-import { Alert, Button, Form, message, Modal, Table, Input} from 'antd';
+import { Button, Form, message, Modal, Table, Input} from 'antd';
 
 const UserDetails = () => {
   const [form] = Form.useForm();
@@ -14,6 +14,7 @@ const UserDetails = () => {
       setUsers(users);
     } catch (error) {
       console.error('Error fetching data', error);
+      message.error("Failed To load datar");
     }
   };
 

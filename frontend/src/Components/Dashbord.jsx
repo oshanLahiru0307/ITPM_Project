@@ -19,7 +19,7 @@ import Users from '../Components/UserDetails'
 import Donation from '../Components/Donation'
 import Profile from '../Components/Profile'
 
-const { Sider, Content, Header } = Layout;
+const { Sider, Content} = Layout;
 const { Title } = Typography;
 
 const Dashbord = () => {
