@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select} from 'antd';
+import moment from 'moment';
+import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select } from 'antd';
 import itemController from '../Services/ItemController';
+import categoryController from '../Services/CategoryController';  // Import category controller
 
 const { Option } = Select;
 
 const Items = () => {
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]); // Store available categories
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    fetchItems();
+    fetchCategories(); // Fetch categories when component mounts
+  }, []);
 
   const fetchItems = async () => {
     try {
@@ -19,51 +27,70 @@ const Items = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const data = await categoryController.getAllCategories(); // Fetch categories
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
   const handleAddOrUpdateItem = async (values) => {
     try {
+      const formattedValues = {
+        ...values,
+        mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null, 
+        expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
+      };
+  
       if (selectedItem) {
-        await itemController.updateItem(selectedItem._id, values);
+        await itemController.updateItem(selectedItem._id, formattedValues);
         message.success('Item updated successfully');
       } else {
-        await itemController.addItem(values);
+        await itemController.addItem(formattedValues);
         message.success('Item added successfully');
       }
+  
       fetchItems();
       setModalVisible(false);
       form.resetFields();
       setSelectedItem(null);
     } catch (error) {
-      console.error(error);
-      message.error('Failed to save item');
+      console.error("Error saving item:", error.response?.data || error);
+      message.error(error.response?.data?.error || 'Failed to save item');
     }
   };
+  
 
-  const handleDeleteItem = async (itemId) => {
-    try {
-      await itemController.deleteItem(itemId);
-      message.success('Item deleted successfully');
-      fetchItems();
-    } catch (error) {
-      console.error(error);
-      message.error('Failed to delete item');
-    }
-  };
 
   const handleEditItem = (record) => {
     setSelectedItem(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      ...record,
+      mfd: record.mfd ? moment(record.mfd) : null,  // Convert to Moment
+      expd: record.expd ? moment(record.expd) : null, // Convert to Moment
+    });
     setModalVisible(true);
   };
+  
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
+  const handleDeleteItem = async (ItemId)=>{
+    try{
+      await itemController.deleteItem(ItemId)
+      message.success('Item Deleted Successfuly')
+    }catch(error){
+      console.error('failed to delete item', error)
+      message.error("Failed to delete Item")
+    }
+  }
+  
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
-    { title: 'Category', dataIndex: 'category', key: 'category' },
+    { title: 'Category', dataIndex: ['category', 'name'], key: 'category' },  // Display category name
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
     { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
     { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
@@ -84,21 +111,13 @@ const Items = () => {
   ];
 
   return (
-    <div style={{
-      padding:'10px 20px',
-      backgroundColor:'#F0F8FF',
-      minHeight:'100vh'
-    }}>
+    <div style={{ padding: '10px 20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
       <h1>Items</h1>
-      <Button type="primary" 
-      style={{ 
-        marginBottom: '15px',
-        float:'right' }} 
-        onClick={() => setModalVisible(true)}>
+      <Button type="primary" style={{ marginBottom: '15px', float: 'right' }} onClick={() => setModalVisible(true)}>
         Add Item
       </Button>
 
-      <Table dataSource={items} columns={columns} rowKey="_id"  pagination={{ pageSize: 8 }}  />
+      <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
 
       <Modal
         title={selectedItem ? 'Edit Item' : 'Add Item'}
@@ -108,9 +127,18 @@ const Items = () => {
           form.resetFields();
           setSelectedItem(null);
         }}
-        footer={null}
+        onOk={() => {
+          form.validateFields()
+            .then((values) => {
+              handleAddOrUpdateItem(values);
+              form.resetFields();
+            })
+            .catch((info) => {
+              console.log("Validate Failed:", info);
+            })
+        }}
       >
-        <Form form={form} layout="vertical" onFinish={handleAddOrUpdateItem}>
+        <Form form={form} layout="vertical">
           <Form.Item name="name" label="Item Name" rules={[{ required: true, message: 'Please enter item name' }]}>
             <Input />
           </Form.Item>
@@ -125,9 +153,11 @@ const Items = () => {
 
           <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
             <Select placeholder="Select a category">
-              <Option value="Food">Food</Option>
-              <Option value="Clothing">Clothing</Option>
-              <Option value="Electronics">Electronics</Option>
+              {categories.map((category) => (
+                <Option key={category._id} value={category._id}>
+                  {category.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
@@ -156,12 +186,6 @@ const Items = () => {
             ]}
           >
             <DatePicker style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-              {selectedItem ? 'Update Item' : 'Add Item'}
-            </Button>
           </Form.Item>
         </Form>
       </Modal>
