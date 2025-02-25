@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserController from '../Services/UserController';
-import { Button, Form, message, Modal, Table, Input} from 'antd';
+import { Button, Form, message, Modal, Table, Input } from 'antd';
 
 const UserDetails = () => {
   const [form] = Form.useForm();
@@ -18,7 +18,7 @@ const UserDetails = () => {
     }
   };
 
-  const addUser = async (values) => {
+  const handleaddUser = async (values) => {
     try {
       if (!selectedItem) {
         await UserController.addUser(values);
@@ -52,6 +52,12 @@ const UserDetails = () => {
     setModalVisible(true);
   };
 
+  const handleCancle = () => {
+    setModalVisible(false)
+    form.resetFields()
+    setSelectedItem(null)
+  }
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -68,7 +74,7 @@ const UserDetails = () => {
         <span>
           <Button type="primary" onClick={() => edit(record)}
             style={{
-              marginRight:'10px'
+              marginRight: '10px'
             }}>Edit</Button>
           <Button type="primary" danger onClick={() => deleteUser(record)}>Delete</Button>
         </span>
@@ -78,66 +84,73 @@ const UserDetails = () => {
 
   return (
     <div style={{
-      padding:'20px',
-      backgroundColor:'#F0F8FF',
-      minHeight:'100vh'
+      padding: '20px',
+      backgroundColor: '#F0F8FF',
+      minHeight: '100vh'
     }}>
-      <Button type="primary" onClick={() => setModalVisible(true)} 
-      style={{
-        marginBottom:"20px",
-        float:'left'
-      }}>Add User</Button>
+      <h1>Users</h1>
       <Table dataSource={users} columns={columns} rowKey="_id" />
 
       <Modal
         title={selectedItem ? "Edit User" : "Add User"}
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        open={modalVisible}
+        onCancel={handleCancle}
         onOk={() => {
           form
             .validateFields()
-            .then( (values) => {
-              form.resetFields()
-              addUser(values)
+            .then((values) => {
+              handleaddUser(values);
+              form.resetFields();
             })
-            .catch((info)=> {
-              console.log("Validation Failed:", info)
-            })
+            .catch((info) => {
+              console.log("Validate Failed:", info);
+            });
         }}
       >
         <Form form={form} layout="vertical">
           <Form.Item
+            label="Full Name"
             name="name"
-            lable="Name"
-            rule = {[{
-              require:true, message: "Please enter notice title"
-            }]}>
-              <Input.TextArea rows = {4}/>
-            </Form.Item>
-            <Form.Item
-            name="name"
-            lable="Name"
-            rule = {[{
-              require:true, message: "Please enter notice title"
-            }]}>
-              <Input.TextArea rows = {4}/>
-            </Form.Item>
-            <Form.Item
-            name="name"
-            lable="Name"
-            rule = {[{
-              require:true, message: "Please enter notice title"
-            }]}>
-              <Input.TextArea rows = {4}/>
-            </Form.Item>
-            <Form.Item
-            name="name"
-            lable="Name"
-            rule = {[{
-              require:true, message: "Please enter notice title"
-            }]}>
-              <Input.TextArea rows = {4}/>
-            </Form.Item>
+            rules={[{ required: true, message: "Please enter your name!" }]}
+          >
+            <Input placeholder="Enter your full name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Please enter your email!" },
+              { type: "email", message: "Invalid email format!" },
+            ]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
+
+
+          <Form.Item
+            label="Phone"
+            name="phone"
+            rules={[
+              { required: true, message: "Please enter your Phone Number!" },
+              { min: 10, message: "Phone number must be at least 10 characters!" },
+            ]}
+          >
+            <Input style={{ width: "100%" }}
+              placeholder="Enter your Phone Number" />
+          </Form.Item>
+
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[
+              { required: true, message: "Please enter your Address!" },
+            ]}
+          >
+            <Input style={{ width: "100%" }}
+              placeholder="Enter your Address" />
+          </Form.Item>
+
         </Form>
       </Modal>
     </div>

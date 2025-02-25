@@ -28,18 +28,12 @@ const ItemSchema = new Schema({
         min: 0
     },
     mfd: {
-        type: Date,   // Manufacturing Date
-
+        type: Date,
     },
     expd: {
-        type: Date,   // Expiry Date
-        validate: {
-            validator: function (value) {
-                return value > this.mfd;  // Ensures expiry date is after manufacturing date
-            },
-            message: 'Expiry date must be after manufacturing date'
-        }
+        type: Date,
     }
-}, {timestamps:true});
+}, { timestamps: true });
+
 
 module.exports = mongoose.model('Item', ItemSchema);

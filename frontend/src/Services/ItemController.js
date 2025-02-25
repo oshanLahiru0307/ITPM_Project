@@ -24,9 +24,9 @@ class itemController {
         }
     }
 
-    static async addItem(value){
+    static async addItem(values){
         try{
-            const response = await axios.post(BASE_URI, value)
+            const response = await axios.post(BASE_URI, values)
             return response.data
         }catch(error){
             console.error('error while adding new data', error)

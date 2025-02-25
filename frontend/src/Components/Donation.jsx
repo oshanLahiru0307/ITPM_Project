@@ -8,7 +8,7 @@ const Donation = () => {
       backgroundColor:'#F0F8FF',
       minHeight:'100vh'
     }}>
-        <h1>Donation</h1>
+    <h1>Donation</h1>
     </div>
   )
 }

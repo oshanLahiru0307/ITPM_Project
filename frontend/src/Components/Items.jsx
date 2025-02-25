@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select } from 'antd';
+import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select} from 'antd';
 import itemController from '../Services/ItemController';
 
 const { Option } = Select;
@@ -51,8 +51,7 @@ const Items = () => {
 
   const handleEditItem = (record) => {
     setSelectedItem(record);
-    form.setFieldsValue({
-    });
+    form.setFieldsValue(record);
     setModalVisible(true);
   };
 
@@ -86,20 +85,20 @@ const Items = () => {
 
   return (
     <div style={{
-      padding:'20px',
+      padding:'10px 20px',
       backgroundColor:'#F0F8FF',
       minHeight:'100vh'
     }}>
       <h1>Items</h1>
       <Button type="primary" 
       style={{ 
-        marginBottom: '20px',
+        marginBottom: '15px',
         float:'right' }} 
         onClick={() => setModalVisible(true)}>
         Add Item
       </Button>
 
-      <Table dataSource={items} columns={columns} rowKey="_id" />
+      <Table dataSource={items} columns={columns} rowKey="_id"  pagination={{ pageSize: 8 }}  />
 
       <Modal
         title={selectedItem ? 'Edit Item' : 'Add Item'}

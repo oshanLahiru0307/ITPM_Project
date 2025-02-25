@@ -1,7 +1,13 @@
 import React from 'react';
+import { useSnapshot } from 'valtio';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
-
+import state from '../State/state';
 const Login = () => {
+
+    const navigate = useNavigate()
+
     const onFinish = (values) => {
         console.log('Success:', values);
     };

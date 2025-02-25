@@ -1,4 +1,5 @@
 import React from 'react'
+import {Card} from 'antd'
 
 const Home = () => {
   return (
@@ -9,6 +10,10 @@ const Home = () => {
       minHeight:'100vh'
     }}>
       <h1>Home</h1>
+      <Card
+      style={{
+        height:'650px'
+      }}></Card>
     </div>
   )
 }
