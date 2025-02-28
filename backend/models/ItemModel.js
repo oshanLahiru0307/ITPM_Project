@@ -18,8 +18,7 @@ const ItemSchema = new Schema({
         min: 0
     },
     category: {
-        type: Schema.Types.ObjectId,  // Reference to CategorySchema
-        ref: 'Category',
+        type: String,  // Reference to CategorySchema
         required: true
     },
     qty: {

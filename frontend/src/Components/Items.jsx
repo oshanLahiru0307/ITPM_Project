@@ -79,6 +79,7 @@ const Items = () => {
     try{
       await itemController.deleteItem(ItemId)
       message.success('Item Deleted Successfuly')
+      fetchItems()
     }catch(error){
       console.error('failed to delete item', error)
       message.error("Failed to delete Item")
@@ -90,7 +91,7 @@ const Items = () => {
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
-    { title: 'Category', dataIndex: ['category', 'name'], key: 'category' },  // Display category name
+    { title: 'Category', dataIndex: 'category', key: 'category' },  // Display category name
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
     { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
     { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
@@ -154,7 +155,7 @@ const Items = () => {
           <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
             <Select placeholder="Select a category">
               {categories.map((category) => (
-                <Option key={category._id} value={category._id}>
+                <Option key={category._id} value={category.name}>
                   {category.name}
                 </Option>
               ))}
