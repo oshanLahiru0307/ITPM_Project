@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, Card, message } from 'antd';
+import state from '../State/state';
 import UserController from '../Services/UserController';
 
 const Login = () => {
@@ -17,6 +18,9 @@ const Login = () => {
                 const user = await UserController.loginUser(values);
                 if (user) {
                     navigate('/dashboard');
+                    state.currentUser = user.user
+                    state.token = user.token
+                    console.log(state.currentUser)
                 } else {
                     message.error("Invalid username or password");
                     return;
