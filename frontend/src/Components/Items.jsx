@@ -103,8 +103,13 @@ const Items = () => {
           <Button type="primary" style={{ marginRight: '10px' }} onClick={() => handleEditItem(record)}>
             Edit
           </Button>
-          <Button type="primary" danger onClick={() => handleDeleteItem(record._id)}>
+          <Button type="primary" danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
             Delete
+          </Button>
+          <Button type="primary" style={{
+            background:'#5CD85A'
+          }} onClick={() => handleDeleteItem(record._id)}>
+            Donate
           </Button>
         </>
       ),

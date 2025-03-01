@@ -5,6 +5,7 @@ const app = express()
 const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 const ItemRouter = require('./routers/ItemRoutes')
+const donation = require('./routers/DonationROuter')
 const cors = require('cors')
 
 
@@ -19,6 +20,8 @@ app.use((req,res,next,)=>{
 app.use('/api/user', UserRoutes )
 app.use('/api/category', CategoriesRouter )
 app.use('/api/item', ItemRouter )
+app.use('/api/donation', donation )
+
 
 mongoose.connect(process.env.MONGO_URI)
 .then(

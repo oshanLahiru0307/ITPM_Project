@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const BASE_URI = 'http://localhost:5000/api/user'
+const LOGIN_BASE_URI = 'http://localhost:5000/api/user/login'
 
 
     class UserController{
@@ -52,6 +53,16 @@ const BASE_URI = 'http://localhost:5000/api/user'
                 return response.data
             }catch(error){
                 console.error("error while deleting user", error);
+                throw error
+            }
+        }
+
+        static async loginUser(values){
+            try{
+                const response = await axios.post(LOGIN_BASE_URI, values)
+                return response.data
+            }catch(error){
+                console.error("error while user login")
                 throw error
             }
         }

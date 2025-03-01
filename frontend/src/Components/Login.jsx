@@ -1,18 +1,38 @@
-import React from 'react';
-import { useSnapshot } from 'valtio';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { Button, Checkbox, Form, Input, Card } from 'antd';
-import state from '../State/state';
+import { Button, Checkbox, Form, Input, Card, message } from 'antd';
+import UserController from '../Services/UserController';
+
 const Login = () => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate()
+    const onFinish = async (values) => {
+        setLoading(true);
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
+        if (values.email === 'admin@gmail.com' && values.password) {
+            navigate('/adminDashbord');
+        } else {
+            try {
+                const user = await UserController.loginUser(values);
+                if (user) {
+                    navigate('/dashboard');
+                } else {
+                    message.error("Invalid username or password");
+                    return;
+                }
+            } catch (error) {
+                console.error('Error while logging in:', error);
+                message.error('Login failed');
+            } finally {
+                setLoading(false);
+            }
+        }
     };
+
     const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        console.log("Failed:", errorInfo);
+        message.error("Please fill in all fields");
     };
 
     return (
@@ -23,38 +43,33 @@ const Login = () => {
                 alignItems: 'center',
                 height: '100vh',
                 width: '100%',
-                backgroundImage: 'url("https://img.freepik.com/free-photo/vivid-blurred-colorful-background_58702-2655.jpg?t=st=1739886009~exp=1739889609~hmac=a882aea7036d17b9aec6dd8a3992dd2be1a09da78209f9ba8c15a93ab571f357&w=996")', // Replace with your image URL
+                backgroundImage: 'url("https://img.freepik.com/free-photo/vivid-blurred-colorful-background_58702-2655.jpg?t=st=1739886009~exp=1739889609~hmac=a882aea7036d17b9aec6dd8a3992dd2be1a09da78209f9ba8c15a93ab571f357&w=996")', 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
         >
             <Card
                 style={{
-                    width: 400,  // Increased width
-                    height: 350, // Increased height
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', // Adding shadow
-                    borderRadius: '10px', // Optional rounded corners
-                    background: 'rgba(255, 255, 255, 0.9)', // Slight transparency for better blending
+                    width: 400,
+                    height: 350,
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.9)',
                 }}
             >
                 <Form
                     name="basic"
                     layout="vertical"
-                    initialValues={{
-                        remember: true,
-                    }}
-                    onFinish={onFinish}
+                    initialValues={{ remember: true }}
+                    onFinish={onFinish}  // ✅ FIXED: Passing function correctly
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <Form.Item
-                        label="Username"
-                        name="username"
+                        label="Email"
+                        name="email"
                         rules={[
-                            {
-                                required: true,
-                                message: 'Please input your username!',
-                            },
+                            { required: true, message: 'Please input your username!' },
                         ]}
                     >
                         <Input />
@@ -64,10 +79,7 @@ const Login = () => {
                         label="Password"
                         name="password"
                         rules={[
-                            {
-                                required: true,
-                                message: 'Please input your password!',
-                            },
+                            { required: true, message: 'Please input your password!' },
                         ]}
                     >
                         <Input.Password />
@@ -78,7 +90,7 @@ const Login = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block>
+                        <Button type="primary" htmlType="submit" loading={loading} block>
                             Login
                         </Button>
                     </Form.Item>
