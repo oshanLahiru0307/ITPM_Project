@@ -11,8 +11,8 @@ const Login = () => {
     const onFinish = async (values) => {
         setLoading(true);
 
-        if (values.email === 'admin@gmail.com' && values.password) {
-            navigate('/adminDashbord');
+        if (values.email === 'admin@gmail.com' && values.password === 'admin123') {
+            navigate('/admindashboard');
         } else {
             try {
                 const user = await UserController.loginUser(values);

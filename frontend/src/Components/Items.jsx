@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select } from 'antd';
+import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select, Card } from 'antd';
 import itemController from '../Services/ItemController';
 import categoryController from '../Services/CategoryController';  // Import category controller
 
@@ -40,10 +40,10 @@ const Items = () => {
     try {
       const formattedValues = {
         ...values,
-        mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null, 
+        mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
       };
-  
+
       if (selectedItem) {
         await itemController.updateItem(selectedItem._id, formattedValues);
         message.success('Item updated successfully');
@@ -51,7 +51,7 @@ const Items = () => {
         await itemController.addItem(formattedValues);
         message.success('Item added successfully');
       }
-  
+
       fetchItems();
       setModalVisible(false);
       form.resetFields();
@@ -61,7 +61,7 @@ const Items = () => {
       message.error(error.response?.data?.error || 'Failed to save item');
     }
   };
-  
+
 
 
   const handleEditItem = (record) => {
@@ -73,19 +73,19 @@ const Items = () => {
     });
     setModalVisible(true);
   };
-  
 
-  const handleDeleteItem = async (ItemId)=>{
-    try{
+
+  const handleDeleteItem = async (ItemId) => {
+    try {
       await itemController.deleteItem(ItemId)
       message.success('Item Deleted Successfuly')
       fetchItems()
-    }catch(error){
+    } catch (error) {
       console.error('failed to delete item', error)
       message.error("Failed to delete Item")
     }
   }
-  
+
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
@@ -107,7 +107,7 @@ const Items = () => {
             Delete
           </Button>
           <Button type="primary" style={{
-            background:'#5CD85A'
+            background: '#5CD85A'
           }} onClick={() => handleDeleteItem(record._id)}>
             Donate
           </Button>
@@ -117,84 +117,102 @@ const Items = () => {
   ];
 
   return (
-    <div style={{ padding: '10px 20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
-      <h1>Items</h1>
-      <Button type="primary" style={{ marginBottom: '15px', float: 'right' }} onClick={() => setModalVisible(true)}>
-        Add Item
-      </Button>
-
-      <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
-
-      <Modal
-        title={selectedItem ? 'Edit Item' : 'Add Item'}
-        open={modalVisible}
-        onCancel={() => {
-          setModalVisible(false);
-          form.resetFields();
-          setSelectedItem(null);
+    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
+      <Card
+        hoverable={true}
+        style={{
+          width: '100%',
+          height: '740px',
         }}
-        onOk={() => {
-          form.validateFields()
-            .then((values) => {
-              handleAddOrUpdateItem(values);
-              form.resetFields();
-            })
-            .catch((info) => {
-              console.log("Validate Failed:", info);
-            })
-        }}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Item Name" rules={[{ required: true, message: 'Please enter item name' }]}>
-            <Input />
-          </Form.Item>
 
-          <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter a description' }]}>
-            <Input.TextArea />
-          </Form.Item>
+        title={
+          <h1
+            style={{
+              color: '#007FFF'
+            }}>Items</h1>
+        }
 
-          <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter a price' }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
-          </Form.Item>
+        extra={
+          <Button type="primary" style={{ float: 'right' }} onClick={() => setModalVisible(true)}>
+            + Add Item
+          </Button>
+        }>
 
-          <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
-            <Select placeholder="Select a category">
-              {categories.map((category) => (
-                <Option key={category._id} value={category.name}>
-                  {category.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
 
-          <Form.Item name="qty" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
-          </Form.Item>
 
-          <Form.Item name="mfd" label="Manufacturing Date">
-            <DatePicker style={{ width: '100%' }} />
-          </Form.Item>
+        <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
 
-          <Form.Item
-            name="expd"
-            label="Expiry Date"
-            dependencies={['mfd']}
-            rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const mfd = getFieldValue('mfd');
-                  if (!value || !mfd || value.isAfter(mfd)) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Expiry date must be after manufacturing date'));
-                },
-              }),
-            ]}
-          >
-            <DatePicker style={{ width: '100%' }} />
-          </Form.Item>
-        </Form>
-      </Modal>
+        <Modal
+          title={selectedItem ? 'Edit Item' : 'Add Item'}
+          open={modalVisible}
+          onCancel={() => {
+            setModalVisible(false);
+            form.resetFields();
+            setSelectedItem(null);
+          }}
+          onOk={() => {
+            form.validateFields()
+              .then((values) => {
+                handleAddOrUpdateItem(values);
+                form.resetFields();
+              })
+              .catch((info) => {
+                console.log("Validate Failed:", info);
+              })
+          }}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label="Item Name" rules={[{ required: true, message: 'Please enter item name' }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter a description' }]}>
+              <Input.TextArea />
+            </Form.Item>
+
+            <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter a price' }]}>
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
+              <Select placeholder="Select a category">
+                {categories.map((category) => (
+                  <Option key={category._id} value={category.name}>
+                    {category.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item name="qty" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}>
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item name="mfd" label="Manufacturing Date">
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+
+            <Form.Item
+              name="expd"
+              label="Expiry Date"
+              dependencies={['mfd']}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const mfd = getFieldValue('mfd');
+                    if (!value || !mfd || value.isAfter(mfd)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('Expiry date must be after manufacturing date'));
+                  },
+                }),
+              ]}
+            >
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+          </Form>
+        </Modal>
+      </Card>
     </div>
   );
 };
