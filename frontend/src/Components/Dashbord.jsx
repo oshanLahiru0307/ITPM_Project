@@ -93,7 +93,10 @@ const Dashbord = () => {
           <Menu.Item
             key="6"
             icon={<LogoutOutlined />}
-            onClick={() => { localStorage.clear(); navigate("/"); }}
+            onClick={() => { 
+              state.currentUser = null
+              state.token = null
+              navigate("/"); }}
             style={{ marginBottom: "15px" }}
           >
             Log Out

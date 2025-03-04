@@ -11,12 +11,12 @@ const Profile = () => {
 
       <div><Card
         hoverable={true}
-        title={<h1
+        title={<h3
           style={{
             color: '#007FFF'
-          }}>Profile</h1>}
+          }}>Profile</h3>}
         style={{
-          height: '740px'
+          height: '663px'
         }}></Card></div>
     </div>
   )

@@ -12,12 +12,12 @@ const Home = () => {
       <Card
         hoverable={true}
         title={
-          <h1
+          <h3
             style={{
               color: '#007FFF'
-            }}>Home</h1>}
+            }}>Home</h3>}
         style={{
-          height: '740px'
+          height: '663px'
         }}></Card>
     </div>
   )

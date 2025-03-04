@@ -53,6 +53,17 @@ class DonationController {
             throw error
         }
     }
+
+    static async getUserDonation(userId) {
+        try {
+            const response = await axios.get(`${BASE_URI}/userDonation/${userId}`); // ✅ Change to GET request
+            return response.data;
+        } catch (error) {
+            console.error('Error while fetching user donations', error);
+            throw error;
+        }
+    }
+    
 }
 
 export default  DonationController

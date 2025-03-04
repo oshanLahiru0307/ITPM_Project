@@ -92,12 +92,12 @@ const UserDetails = () => {
         hoverable={true}
         style={{
           width: '100%',
-          height: '740px',
+          height: '663px',
         }}
-        title={<h1
+        title={<h3
           style={{
             color: '#007FFF'
-          }}>Users</h1>}
+          }}>Users</h3>}
       >
         <Table dataSource={users} columns={columns} rowKey="_id" />
 

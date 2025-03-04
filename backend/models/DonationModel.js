@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const DonationSchema = new Schema({
 
-    userId:{
+    user:{
         type:String,
         required: true
     },

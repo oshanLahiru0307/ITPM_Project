@@ -122,14 +122,14 @@ const Items = () => {
         hoverable={true}
         style={{
           width: '100%',
-          height: '740px',
+          height: '663px',
         }}
 
         title={
-          <h1
+          <h3
             style={{
               color: '#007FFF'
-            }}>Items</h1>
+            }}>Items</h3>
         }
 
         extra={

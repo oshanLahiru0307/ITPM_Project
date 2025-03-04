@@ -5,13 +5,16 @@ const {
     getSingleDonation,
     addDonation,
     updateDonation,
-    deleteDonation
+    deleteDonation,
+    getUserDonations
 } = require('../controllers/DonationControll')
 
 
 router.get('/', getDonations)
 
 router.get('/:id', getSingleDonation)
+
+router.get('/userDonation/:id', getUserDonations)
 
 router.post('/', addDonation)
 

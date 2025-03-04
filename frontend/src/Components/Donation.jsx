@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import { Card,Button } from 'antd'
-import AllDonation from '../Views/AllDonation';
+import AllDonation from '../Views/AllDonation'
+import MyDonations from '../Views/MyDonations';
 
 const tabList = [
   {
@@ -14,7 +15,7 @@ const tabList = [
   },
 ];
 const contentList = {
-  MyDonations: <p>My Donations</p>,
+  MyDonations: <MyDonations/>,
   AllDonations: <AllDonation />,
 };
 
@@ -43,12 +44,12 @@ const Donation = () => {
         }
         style={{
           width: '100%',
-          height: '740px',
+          height: '663px',
         }}
-        title={<h1
+        title={<h3
           style={{
             color: '#007FFF'
-          }}>Donation</h1>}
+          }}>Donation</h3>}
         tabList={tabList}
         activeTabKey={activeTabKey1}
         onTabChange={onTab1Change}
