@@ -20,7 +20,7 @@ const Login = () => {
                     navigate('/dashboard');
                     state.currentUser = response.user
                     state.token = response.token
-                    localStorage.setItem("user", state.currentUser);
+                    localStorage.setItem("user", JSON.stringify(state.currentUser));
                     localStorage.setItem("token", state.token);
                     console.log(state.currentUser)
                 } else {
