@@ -2,20 +2,25 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select, Card } from 'antd';
 import itemController from '../Services/ItemController';
-import categoryController from '../Services/CategoryController';  // Import category controller
+import categoryController from '../Services/CategoryController';
+import state from '../State/state';
+import { useSnapshot } from 'valtio';
 
 const { Option } = Select;
 
 const Items = () => {
+  const snap = useSnapshot(state)
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState([]); // Store available categories
+  const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [donateModalVisible, setDonateModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [form] = Form.useForm();
+  const [donateForm] = Form.useForm();
 
   useEffect(() => {
     fetchItems();
-    fetchCategories(); // Fetch categories when component mounts
+    fetchCategories();
   }, []);
 
   const fetchItems = async () => {
@@ -29,7 +34,7 @@ const Items = () => {
 
   const fetchCategories = async () => {
     try {
-      const data = await categoryController.getAllCategories(); // Fetch categories
+      const data = await categoryController.getAllCategories();
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -62,36 +67,63 @@ const Items = () => {
     }
   };
 
-
-
   const handleEditItem = (record) => {
     setSelectedItem(record);
     form.setFieldsValue({
       ...record,
-      mfd: record.mfd ? moment(record.mfd) : null,  // Convert to Moment
-      expd: record.expd ? moment(record.expd) : null, // Convert to Moment
+      mfd: record.mfd ? moment(record.mfd) : null,
+      expd: record.expd ? moment(record.expd) : null,
     });
     setModalVisible(true);
   };
 
-
   const handleDeleteItem = async (ItemId) => {
     try {
-      await itemController.deleteItem(ItemId)
-      message.success('Item Deleted Successfuly')
-      fetchItems()
+      await itemController.deleteItem(ItemId);
+      message.success('Item Deleted Successfully');
+      fetchItems();
     } catch (error) {
-      console.error('failed to delete item', error)
-      message.error("Failed to delete Item")
+      console.error('Failed to delete item', error);
+      message.error("Failed to delete Item");
     }
-  }
+  };
 
+  // Handle Donate Button Click
+  const handleDonateItem = (record) => {
+    setSelectedItem(record);
+    donateForm.setFieldsValue({
+      qty: 1, // Default quantity to 1
+    });
+    setDonateModalVisible(true);
+  };
+
+  // Handle Donate Form Submission
+  const handleDonateSubmit = async (values) => {
+    try {
+      const donationData = {
+        user: snap.currentUser._id,
+        ...selectedItem,
+        qty: values.qty
+ // Pass current user ID
+      };
+
+      await itemController.donateItem(donationData);
+      message.success('Item donated successfully');
+
+      setDonateModalVisible(false);
+      donateForm.resetFields();
+      fetchItems();
+    } catch (error) {
+      console.error('Error donating item:', error);
+      message.error("Failed to donate item");
+    }
+  };
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
-    { title: 'Category', dataIndex: 'category', key: 'category' },  // Display category name
+    { title: 'Category', dataIndex: 'category', key: 'category' },
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
     { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
     { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
@@ -106,9 +138,7 @@ const Items = () => {
           <Button type="primary" danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
             Delete
           </Button>
-          <Button type="primary" style={{
-            background: '#5CD85A'
-          }} onClick={() => handleDeleteItem(record._id)}>
+          <Button type="primary" style={{ background: '#5CD85A' }} onClick={() => handleDonateItem(record)}>
             Donate
           </Button>
         </>
@@ -119,29 +149,14 @@ const Items = () => {
   return (
     <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
       <Card
-        hoverable={true}
-        style={{
-          width: '100%',
-          height: '663px',
-        }}
-
-        title={
-          <h3
-            style={{
-              color: '#007FFF'
-            }}>Items</h3>
-        }
-
-        extra={
-          <Button type="primary" style={{ float: 'right' }} onClick={() => setModalVisible(true)}>
-            + Add Item
-          </Button>
-        }>
-
-
-
+        hoverable
+        style={{ width: '100%', height: '663px' }}
+        title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
+        extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
+      >
         <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
 
+        {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
           open={modalVisible}
@@ -151,30 +166,23 @@ const Items = () => {
             setSelectedItem(null);
           }}
           onOk={() => {
-            form.validateFields()
-              .then((values) => {
-                handleAddOrUpdateItem(values);
-                form.resetFields();
-              })
-              .catch((info) => {
-                console.log("Validate Failed:", info);
-              })
+            form.validateFields().then((values) => {
+              handleAddOrUpdateItem(values);
+              form.resetFields();
+            });
           }}
         >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Item Name" rules={[{ required: true, message: 'Please enter item name' }]}>
+            <Form.Item name="name" label="Item Name" rules={[{ required: true }]}>
               <Input />
             </Form.Item>
-
-            <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter a description' }]}>
+            <Form.Item name="description" label="Description" rules={[{ required: true }]}>
               <Input.TextArea />
             </Form.Item>
-
-            <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter a price' }]}>
+            <Form.Item name="price" label="Price" rules={[{ required: true }]}>
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
-
-            <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Please select a category' }]}>
+            <Form.Item name="category" label="Category" rules={[{ required: true }]}>
               <Select placeholder="Select a category">
                 {categories.map((category) => (
                   <Option key={category._id} value={category.name}>
@@ -183,32 +191,31 @@ const Items = () => {
                 ))}
               </Select>
             </Form.Item>
-
-            <Form.Item name="qty" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}>
+            <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
+          </Form>
+        </Modal>
 
-            <Form.Item name="mfd" label="Manufacturing Date">
-              <DatePicker style={{ width: '100%' }} />
-            </Form.Item>
-
-            <Form.Item
-              name="expd"
-              label="Expiry Date"
-              dependencies={['mfd']}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const mfd = getFieldValue('mfd');
-                    if (!value || !mfd || value.isAfter(mfd)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Expiry date must be after manufacturing date'));
-                  },
-                }),
-              ]}
-            >
-              <DatePicker style={{ width: '100%' }} />
+        {/* Donate Modal */}
+        <Modal
+          title="Donate Item"
+          open={donateModalVisible}
+          onCancel={() => {
+            setDonateModalVisible(false);
+            donateForm.resetFields();
+            setSelectedItem(null);
+          }}
+          onOk={() => {
+            donateForm.validateFields().then((values) => {
+              handleDonateSubmit(values);
+              donateForm.resetFields();
+            });
+          }}
+        >
+          <Form form={donateForm} layout="vertical">
+            <Form.Item name="qty" label="Quantity to Donate" rules={[{ required: true }]}>
+              <InputNumber min={1} max={selectedItem?.qty || 1} style={{ width: '100%' }} />
             </Form.Item>
           </Form>
         </Modal>

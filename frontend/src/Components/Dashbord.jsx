@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {Layout, Menu, Typography } from 'antd';
 import {
   HomeOutlined,
@@ -26,6 +26,11 @@ const Dashbord = () => {
   const [collapsed, setCollapsed] = useState(false);
   const snap = useSnapshot(state);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('Current User:', state.currentUser);
+    console.log('Token:', state.token);
+  }, []);
 
   return (
     <Layout  style={{ minHeight: '100vh' }}>

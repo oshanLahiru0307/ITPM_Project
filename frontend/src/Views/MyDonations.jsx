@@ -1,45 +1,48 @@
-import React from 'react'
-import { useSnapshot } from "valtio"
+import React, { useState, useEffect } from 'react';
+import { useSnapshot } from "valtio";
+import { Table, message } from 'antd';
 import state from '../State/state.js';
-import { useState, useEffect } from 'react';
-import { Table } from 'antd'
 import DonationController from '../Services/DonationController.jsx';
 
 const columns = [
-
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     { title: 'Category', dataIndex: 'category', key: 'category' },
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
     { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
     { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
-]
+];
 
 const MyDonations = () => {
-    const [donations, setDonations] = useState([])
-    const snap = useSnapshot(state)
-    const user = snap.currentUser
+    const [donations, setDonations] = useState([]);
+    const snap = useSnapshot(state);
+    const user = snap.currentUser?._id;
 
-    const fetchDonation = async (userId) => {
-
-        try {
-            console.log(userId)
-            const data = await DonationController.getUserDonation(userId)
-            setDonations(data)
-            console.log(donations)
-        } catch (error) {
-            console.error(error)
+    useEffect(() => {
+        if (!user) {
+            message.warning("User not logged in");
+            return;
         }
-    }
 
-    useEffect(()=> {
-        fetchDonation(user)
-    }, [user])
+        const fetchDonation = async () => {
+            try {
+                const data = await DonationController.getUserDonation(user);
+                setDonations(data);
+            } catch (error) {
+                console.error("Error fetching user donations:", error);
+                message.error("Failed to fetch donations");
+            }
+        };
+
+        fetchDonation();
+    }, [user]);
+
     return (
         <div>
-            <Table dataSource={donations} columns={columns} rowKey={donations._id} />
+            <h2>My Donations</h2>
+            <Table dataSource={donations} columns={columns} rowKey="_id" />
         </div>
-    )
-}
+    );
+};
 
-export default MyDonations
+export default MyDonations;

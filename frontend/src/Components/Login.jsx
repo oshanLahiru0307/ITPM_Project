@@ -15,11 +15,13 @@ const Login = () => {
             navigate('/admindashboard');
         } else {
             try {
-                const user = await UserController.loginUser(values);
-                if (user) {
+                const response = await UserController.loginUser(values);
+                if (response) {
                     navigate('/dashboard');
-                    state.currentUser = user.user
-                    state.token = user.token
+                    state.currentUser = response.user
+                    state.token = response.token
+                    localStorage.setItem("user", state.currentUser);
+                    localStorage.setItem("token", state.token);
                     console.log(state.currentUser)
                 } else {
                     message.error("Invalid username or password");
