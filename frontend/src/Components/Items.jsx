@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select, Card } from 'antd';
 import itemController from '../Services/ItemController';
 import categoryController from '../Services/CategoryController';
+import DonationController from '../Services/DonationController';
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
 
@@ -107,7 +108,7 @@ const Items = () => {
  // Pass current user ID
       };
 
-      await itemController.donateItem(donationData);
+      await DonationController.addDonation(donationData);
       message.success('Item donated successfully');
 
       setDonateModalVisible(false);
@@ -193,6 +194,12 @@ const Items = () => {
             </Form.Item>
             <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
               <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true }]}>
+              <DatePicker style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="expd" label="Expire Date" rules={[{ required: true }]}>
+              <DatePicker style={{ width: '100%' }}/>
             </Form.Item>
           </Form>
         </Modal>

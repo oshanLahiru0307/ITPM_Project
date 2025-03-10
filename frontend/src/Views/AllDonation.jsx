@@ -32,8 +32,7 @@ const AllDonation = () => {
 
   return (
     <div>
-      
-      <Table dataSource={donation} columns={columns} rowKey={donation._id}  pagination={{pageSize: 7}}/>
+      <Table dataSource={donation} columns={columns} rowKey={donation._id}  pagination={{pageSize: 6}}/>
     </div>
   )
 }

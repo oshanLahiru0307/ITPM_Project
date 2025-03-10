@@ -1,6 +1,7 @@
 import { proxy } from 'valtio';
 
 let storedUser = null;
+
 try {
   const user = localStorage.getItem("user");
   storedUser = user ? JSON.parse(user) : null;
