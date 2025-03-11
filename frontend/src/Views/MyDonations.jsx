@@ -115,7 +115,7 @@ const MyDonations = () => {
         }
     };
 
-    // Handle delete
+    // Handle delete...
     const handleDeleteItem = async (id) => {
         try {
             await DonationController.deleteDonation(id);
