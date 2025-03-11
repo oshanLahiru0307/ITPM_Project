@@ -21,9 +21,9 @@ const MyDonations = () => {
             title: 'Action', key: 'action',
             render: (_, record) => (
                 <span>
-                    <Button type='primary' danger 
-                    style={{ marginRight: '10px' }} 
-                    onClick={() => handleDeleteItem(record._id)}>
+                    <Button type='primary' danger
+                        style={{ marginRight: '10px' }}
+                        onClick={() => handleDeleteItem(record._id)}>
                         Delete
                     </Button>
                     <Button type='primary' onClick={() => handleEdit(record)}>
@@ -102,10 +102,10 @@ const MyDonations = () => {
                 console.log("Submitting Data:", formattedValues);
 
                 await DonationController.updatedonation(selectedItem._id, formattedValues);
-                    setModalVisible(false);
-                    form.resetFields();
-                    message.success('Donation updated successfully');
-                    fetchDonation(); // Refresh data
+                setModalVisible(false);
+                form.resetFields();
+                message.success('Donation updated successfully');
+                fetchDonation(); // Refresh data
             } catch (error) {
                 console.error('Error while updating donation:', error);
                 message.error('Failed to update donation');
@@ -129,7 +129,7 @@ const MyDonations = () => {
 
     return (
         <div>
-            <Table dataSource={donations} columns={columns} rowKey="_id" />
+            <Table dataSource={donations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }}/>
 
             <Modal
                 title="Edit Donation"
