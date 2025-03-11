@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Table, Button, message, Form, Modal, Input } from 'antd'
+import { Table, Button, message, Form, Modal, Input, Card } from 'antd'
 import CategoryController from '../Services/CategoryController'
 
 const Categories = () => {
@@ -93,44 +93,58 @@ const Categories = () => {
         backgroundColor: '#F0F8FF',
         minHeight: '100vh'
       }}>
-      <h1>Categories</h1>
-      <Button type='primary'
+      <Card
+        hoverable={true}
         style={{
-          marginBlock: '20px',
-          float: 'right'
+          width: '100%',
+          height: '663px',
         }}
+        title={<h3
+          style={{
+            color: '#007FFF'
+          }}>Categories</h3>}
 
-        onClick={() => {
-          SetmodalVisible(true)
-        }}>Add Category</Button>
-      <Table dataSource={categories} columns={columns} />
-      <Modal
-        title={selectedItem ? 'Edit Item' : 'Add Item'}
-        open={modalVisible}
-        onCancel={handleCancle}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              handleAddCategory(values);
-              form.resetFields();
-            })
-            .catch((info) => {
-              console.log("Validate Failed:", info);
-            });
-        }}
-      >
-        <Form form={form} layout="vertical" >
-          <Form.Item name="name" label="Category" rules={[{ required: true, message: 'Please enter category name' }]}>
-            <Input />
-          </Form.Item>
+        extra={<Button type='primary'
+          style={{
+            float: 'right'
+          }}
 
-          <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter description' }]}>
-            <Input />
-          </Form.Item>
-          
-        </Form>
-      </Modal>
+          onClick={() => {
+            SetmodalVisible(true)
+          }}>+ Add Category</Button>}>
+
+
+
+        <Table dataSource={categories} columns={columns} />
+        <Modal
+          title={selectedItem ? 'Edit Item' : 'Add Item'}
+          open={modalVisible}
+          onCancel={handleCancle}
+          onOk={() => {
+            form
+              .validateFields()
+              .then((values) => {
+                handleAddCategory(values);
+                form.resetFields();
+              })
+              .catch((info) => {
+                console.log("Validate Failed:", info);
+              });
+          }}
+        >
+          <Form form={form} layout="vertical" >
+            <Form.Item name="name" label="Category" rules={[{ required: true, message: 'Please enter category name' }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter description' }]}>
+              <Input />
+            </Form.Item>
+
+          </Form>
+        </Modal>
+
+      </Card>
     </div>
   )
 }

@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt')
+const jwttoken = require('jsonwebtoken')
 const UserSchema = require('../models/UserModel')
+const { findOne } = require('../models/DonationModel')
 
 
 //get user...
@@ -67,6 +69,27 @@ const deleteUser = async (req,res)=> {
     }
 }
 
+const loginUser = async (req, res)=> {
+
+    const {email, password} = req.body
+
+    try{
+        const user = await UserSchema.findOne({email:email})
+        if(!user){
+           return res.status(400).json({mssg:"user name is wrong..."})
+        }
+        const matchUser = await bcrypt.compare(password,user.password)
+        if(!matchUser){
+        return res.status(400).json({mssg:"password is wrong..."}) 
+        }
+        const token = jwttoken.sign({id:user._id}, process.env.SECRET_KEY)
+        delete user.password
+        res.status(200).json({user, token})
+    }catch(error){
+        res.status(400).json(error)
+    }
+}
+
 
 
 module.exports = {
@@ -74,5 +97,6 @@ module.exports = {
     getUsers,
     addUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    loginUser
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserController from '../Services/UserController';
-import { Button, Form, message, Modal, Table, Input } from 'antd';
+import { Button, Form, message, Modal, Table, Input, Card } from 'antd';
 
 const UserDetails = () => {
   const [form] = Form.useForm();
@@ -88,71 +88,82 @@ const UserDetails = () => {
       backgroundColor: '#F0F8FF',
       minHeight: '100vh'
     }}>
-      <h1>Users</h1>
-      <Table dataSource={users} columns={columns} rowKey="_id" />
-
-      <Modal
-        title={selectedItem ? "Edit User" : "Add User"}
-        open={modalVisible}
-        onCancel={handleCancle}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              handleaddUser(values);
-              form.resetFields();
-            })
-            .catch((info) => {
-              console.log("Validate Failed:", info);
-            });
+      <Card
+        hoverable={true}
+        style={{
+          width: '100%',
+          height: '663px',
         }}
+        title={<h3
+          style={{
+            color: '#007FFF'
+          }}>Users</h3>}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Full Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter your name!" }]}
-          >
-            <Input placeholder="Enter your full name" />
-          </Form.Item>
+        <Table dataSource={users} columns={columns} rowKey="_id" />
 
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please enter your email!" },
-              { type: "email", message: "Invalid email format!" },
-            ]}
-          >
-            <Input placeholder="Enter your email" />
-          </Form.Item>
+        <Modal
+          title={selectedItem ? "Edit User" : "Add User"}
+          open={modalVisible}
+          onCancel={handleCancle}
+          onOk={() => {
+            form
+              .validateFields()
+              .then((values) => {
+                handleaddUser(values);
+                form.resetFields();
+              })
+              .catch((info) => {
+                console.log("Validate Failed:", info);
+              });
+          }}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item
+              label="Full Name"
+              name="name"
+              rules={[{ required: true, message: "Please enter your name!" }]}
+            >
+              <Input placeholder="Enter your full name" />
+            </Form.Item>
+
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Please enter your email!" },
+                { type: "email", message: "Invalid email format!" },
+              ]}
+            >
+              <Input placeholder="Enter your email" />
+            </Form.Item>
 
 
-          <Form.Item
-            label="Phone"
-            name="phone"
-            rules={[
-              { required: true, message: "Please enter your Phone Number!" },
-              { min: 10, message: "Phone number must be at least 10 characters!" },
-            ]}
-          >
-            <Input style={{ width: "100%" }}
-              placeholder="Enter your Phone Number" />
-          </Form.Item>
+            <Form.Item
+              label="Phone"
+              name="phone"
+              rules={[
+                { required: true, message: "Please enter your Phone Number!" },
+                { min: 10, message: "Phone number must be at least 10 characters!" },
+              ]}
+            >
+              <Input style={{ width: "100%" }}
+                placeholder="Enter your Phone Number" />
+            </Form.Item>
 
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[
-              { required: true, message: "Please enter your Address!" },
-            ]}
-          >
-            <Input style={{ width: "100%" }}
-              placeholder="Enter your Address" />
-          </Form.Item>
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[
+                { required: true, message: "Please enter your Address!" },
+              ]}
+            >
+              <Input style={{ width: "100%" }}
+                placeholder="Enter your Address" />
+            </Form.Item>
 
-        </Form>
-      </Modal>
+          </Form>
+        </Modal>
+      </Card>
     </div>
   );
 };

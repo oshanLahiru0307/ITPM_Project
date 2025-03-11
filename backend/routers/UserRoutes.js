@@ -4,7 +4,8 @@ const {
     getUsers,
     addUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    loginUser
 } = require('../controllers/UserController')
 
 const router = express.Router()
@@ -16,8 +17,11 @@ router.get('/:id', getUser)
 //get users...
 router.get('/',  getUsers)
 
-//add user...
+//add/ register user...
 router.post('/', addUser)
+
+//login user...
+router.post('/login', loginUser)
 
 //update user...
 router.patch('/:id', updateUser)
