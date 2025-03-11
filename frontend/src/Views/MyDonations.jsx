@@ -45,13 +45,13 @@ const MyDonations = () => {
             return;
         }
         fetchDonation();
-    });
+    }, []);
 
     const handleDeleteItem = async (id) => {
         try{
             await DonationController.deleteDonation(id);
             message.success("Donation deleted successfully");
-
+            setDonations((prevDonations) => prevDonations.filter(donation => donation._id !== id))
         }catch(error){
             console.error("Error deleting donation:", error);
             message.error("Failed to delete donation");

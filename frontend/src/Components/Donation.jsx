@@ -1,163 +1,128 @@
-import React from 'react'
-import { useSnapshot } from 'valtio'
-import { useState,useEffect } from 'react'
-import { Card,Button, Modal, Form, Input, InputNumber, DatePicker, Select,message} from 'antd'
-import AllDonation from '../Views/AllDonation'
+import React, { useState, useEffect } from 'react';
+import { useSnapshot } from "valtio";
+import { Card, Button, Modal, Form, Input, InputNumber, DatePicker, Select, message } from 'antd';
+import AllDonation from '../Views/AllDonation';
 import MyDonations from '../Views/MyDonations';
-import CategoryController from '../Services/CategoryController';
+import CategoryController from '../Services/CategoryController';  
 import DonationController from '../Services/DonationController';
-import state from '../State/state';
+import state from '../State/state.js';
+
 const { Option } = Select;
 
 const tabList = [
-  {
-    key: 'MyDonations',
-    tab: 'My Donations',
-  },
-  {
-    key: 'AllDonations',
-    tab: 'All Donations',
-  },
+  { key: 'MyDonations', tab: 'My Donations' },
+  { key: 'AllDonations', tab: 'All Donations' },
 ];
-const contentList = {
-  MyDonations: <MyDonations/>,
-  AllDonations: <AllDonation />,
-};
-
 
 const Donation = () => {
+  const snap = useSnapshot(state);
+  const currentUser = snap.currentUser?._id; // Get current user ID
 
   const [activeTabKey1, setActiveTabKey1] = useState('MyDonations');
-  const [item, setItem] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
-  const snap = useSnapshot(state);
-  const onTab1Change = (key) => {
-    setActiveTabKey1(key);
+  const [refresh, setRefresh] = useState(false); // State to trigger refresh
+
+  const onTab1Change = (key) => setActiveTabKey1(key);
+
+  // Fetch categories for dropdown
+  const fetchCategories = async () => {
+    try {
+      const data = await CategoryController.getAllCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   };
 
-  const fetchCategories = async ()=> {
-      try{
-        const data = await CategoryController.getAllCategories();
-        setCategories(data);
-      }catch(error){
-        console.error('Error fetching categories:', error)
-      }
-  }
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-  const fetchItems = async ()=> {
-    try{
-      const data = await DonationController.getDonation();
-      setItem(data);
-      snap.donations = item;
-    }catch(error){
-      console.error('Error fetching items:', error)
-    }
-  }
-
-  const handleAddOrUpdateItem = async (values) => {
+  // Handle form submission
+  const handleAddDonation = async (values) => {
     try {
+      if (!currentUser) {
+        message.error("User not logged in");
+        return;
+      }
+
       const formattedValues = {
-        user: snap.currentUser._id,
         ...values,
+        user: currentUser, // Attach logged-in user
         mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
       };
+
       await DonationController.addDonation(formattedValues);
-      message.success('Item donate successfully');
-      fetchItems();
+      message.success('Donation added successfully');
+      
       setModalVisible(false);
       form.resetFields();
+      setRefresh(prev => !prev); // Trigger re-fetch in child components
+
     } catch (error) {
-      console.error("Error saving item:", error.response?.data || error);
-      message.error(error.response?.data?.error || 'Failed to save item');
+      console.error("Error adding donation:", error);
+      message.error("Failed to add donation");
     }
   };
 
-  useEffect(()=> {
-    fetchCategories();
-    fetchItems()
-  },)
-
   return (
-    <div
-      style={{
-        padding: '20px',
-        backgroundColor: '#F0F8FF',
-        minHeight: '100vh'
-      }}>
+    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
       <Card
-        hoverable={true}
+        hoverable
         extra={
-          <Button type="primary" style={{ float: 'right' }} onClick={()=> {
-            setModalVisible(true)
-          }}>
-          + Add Donation
-        </Button>
+          <Button type="primary" onClick={() => setModalVisible(true)}>
+            + Add Donation
+          </Button>
         }
-        style={{
-          width: '100%',
-          height: '663px',
-        }}
-        title={<h3
-          style={{
-            color: '#007FFF'
-          }}>Donation</h3>}
+        style={{ width: '100%', height: '663px' }}
+        title={<h3 style={{ color: '#007FFF' }}>Donation</h3>}
         tabList={tabList}
         activeTabKey={activeTabKey1}
         onTabChange={onTab1Change}
       >
-        {contentList[activeTabKey1]}
+        {activeTabKey1 === 'MyDonations' ? <MyDonations refresh={refresh} /> : <AllDonation refresh={refresh} />}
       </Card>
-      
-      <Modal
-          title={'Add Donation'}
-          open={modalVisible}
-          onCancel={() => {
-            setModalVisible(false);
-            form.resetFields();
-          }}
-          onOk={() => {
-            form.validateFields().then((values) => {
-              handleAddOrUpdateItem(values);
-              form.resetFields();
-            });
-          }}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Item Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-              <Input.TextArea />
-            </Form.Item>
-            <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-              <InputNumber min={0} style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-              <Select placeholder="Select a category">
-                {categories.map((category) => (
-                  <Option key={category._id} value={category.name}>
-                    {category.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
-              <InputNumber min={0} style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true }]}>
-              <DatePicker style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item name="expd" label="Expire Date" rules={[{ required: true }]}>
-              <DatePicker style={{ width: '100%' }}/>
-            </Form.Item>
-          </Form>
-        </Modal>
-      
-    </div>
-  )
-}
 
-export default Donation
+      {/* Add Donation Modal */}
+      <Modal
+        title="Add Donation"
+        open={modalVisible}
+        onCancel={() => { setModalVisible(false); form.resetFields(); }}
+        onOk={() => form.validateFields().then(handleAddDonation)}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="name" label="Item Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="category" label="Category" rules={[{ required: true }]}>
+            <Select placeholder="Select a category">
+              {categories.map((category) => (
+                <Option key={category._id} value={category.name}>{category.name}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="mfd" label="Manufacture Date">
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="expd" label="Expiry Date">
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
+
+export default Donation;
