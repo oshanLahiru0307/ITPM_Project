@@ -125,7 +125,7 @@ const MyDonations = () => {
             console.error("Error deleting donation:", error);
             message.error("Failed to delete donation");
         }
-    };
+    }
 
     return (
         <div>
