@@ -70,13 +70,14 @@ const Profile = () => {
           <hr style={{ margin: '15px 0' }} />
           <div style={{ marginTop: '50px' }}>
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>User Name:</strong> <span>{user.name || 'Add name'}</span></p>
-            <hr style={{ margin: '15px 20' }} />
+            <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Email Address:</strong> <span>{user.email || 'Add email'}</span></p>
-            <hr />
+            <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Mobile Number:</strong> <span>{user.phone || 'Add number'}</span></p>
-            <hr />
+            <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Address:</strong> <span>{user.address || 'Add address'}</span></p>
-            <hr />
+            <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
+
           </div>
           <div style={{ marginTop: '80px', display: 'flex', gap: '20px' }}>
             <Button type="primary" onClick={handleEdit}>Edit Profile</Button>
