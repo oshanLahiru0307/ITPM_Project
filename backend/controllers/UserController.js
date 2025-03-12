@@ -67,8 +67,6 @@ const updateUser = async (req,res)=> {
     const {id} = req.params
     try{
         const response = await UserSchema.findByIdAndUpdate({_id:id}, {...req.body})
-        console.log("check payload",response)
-        console.log("req.body",req.body)
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error: error})
