@@ -1,31 +1,34 @@
-import React, { useState } from 'react';
-import { Card, Button, Form, Input, Modal, message, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Form, Input, Modal, message } from 'antd';
+import state from '../State/state';
 
 const Profile = () => {
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState({
-    picture: 'https://www.example.com/user-picture.jpg',
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+1234567890',
-    address: '123 Main Street, City, Country'
-  });
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user')) || state.currentUser;
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
 
   const handleEdit = () => {
     form.setFieldsValue(user);
     setEditModalVisible(true);
-    setPreviewImage(user.picture); // Set the preview image
+    setPreviewImage(user?.picture);
   };
 
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
-      setUser({ ...values, picture: previewImage || user.picture });
+      const updatedUser = { ...user, ...values, picture: previewImage || user?.picture };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      state.currentUser = updatedUser;
       setEditModalVisible(false);
       message.success("Profile updated successfully!");
     } catch (error) {
@@ -41,6 +44,10 @@ const Profile = () => {
     }
   };
 
+  if (!user) {
+    return <p>Loading user data...</p>;
+  }
+
   return (
     <div style={{
       padding: '20px',
@@ -53,7 +60,7 @@ const Profile = () => {
           width: '100%',
           minHeight: '663px',
         }}
-        title={<h3 style={{ color: '#007FFF' }}>Users</h3>}
+        title={<h3 style={{ color: '#007FFF' }}>User Profile</h3>}
       >
         <Card style={{ width: '50vw', padding: '20px', textAlign: 'left' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -133,5 +140,6 @@ const Profile = () => {
     </div>
   );
 };
+
 
 export default Profile;
