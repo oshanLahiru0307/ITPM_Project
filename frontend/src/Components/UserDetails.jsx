@@ -10,13 +10,14 @@ const UserDetails = () => {
 
   const fetchUsers = async () => {
     try {
-      const users = await UserController.getAllUsers();
-      setUsers(users);
+        const data = await UserController.getAllUsers();
+        setUsers(data);
     } catch (error) {
-      console.error('Error fetching data', error);
-      message.error("Failed To load datar");
+        console.error('Error fetching data:', error);
+        message.error("Failed to load data.");
     }
-  };
+};
+
 
   const handleaddUser = async (values) => {
     try {

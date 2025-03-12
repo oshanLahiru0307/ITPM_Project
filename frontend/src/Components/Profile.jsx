@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Input, Modal, message } from 'antd';
+import UserController from '../Services/UserController';
 import state from '../State/state';
 
 const Profile = () => {
@@ -26,21 +27,24 @@ const Profile = () => {
     try {
       const values = await form.validateFields();
       const updatedUser = { ...user, ...values, picture: previewImage || user?.picture };
+      await UserController.updateUser(user._id, updatedUser);
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       state.currentUser = updatedUser;
       setEditModalVisible(false);
       message.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Validation Failed:", error);
+      console.error("Error updating profile", error);
+      message.error("Failed to update profile");
     }
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewImage(imageUrl);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -49,31 +53,16 @@ const Profile = () => {
   }
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#F0F8FF',
-      minHeight: '100vh'
-    }}>
-      <Card
-        hoverable={true}
-        style={{
-          width: '100%',
-          minHeight: '663px',
-        }}
-        title={<h3 style={{ color: '#007FFF' }}>User Profile</h3>}
-      >
+    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
+      <Card hoverable style={{ width: '100%', minHeight: '663px' }} title={<h3 style={{ color: '#007FFF' }}>User Profile</h3>}>
         <Card style={{ width: '50vw', padding: '20px', textAlign: 'left' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <img
-              src={user.picture}
-              alt="User"
-              style={{ width: '80px', height: '80px', borderRadius: '50%' }}
-            />
+            <img src={user.picture} alt="User" style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
             <div>
               <h3>{user.name}</h3>
               <p>{user.email}</p>
             </div>
-          </div >
+          </div>
           <hr style={{ margin: '15px 0' }} />
           <div style={{ marginTop: '50px' }}>
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>User Name:</strong> <span>{user.name || 'Add name'}</span></p>
@@ -93,13 +82,7 @@ const Profile = () => {
         </Card>
       </Card>
 
-      {/* Edit Profile Modal */}
-      <Modal
-        title="Edit Profile"
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={handleSave}
-      >
+      <Modal title="Edit Profile" open={editModalVisible} onCancel={() => setEditModalVisible(false)} onOk={handleSave}>
         <Form form={form} layout="vertical">
           <Form.Item label="Profile Picture">
             <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -121,15 +104,17 @@ const Profile = () => {
           </Form.Item>
         </Form>
       </Modal>
-
       {/* Delete Confirmation Modal */}
       <Modal
         title="Confirm Delete"
         open={deleteModalVisible}
         onCancel={() => setDeleteModalVisible(false)}
         onOk={() => {
+          localStorage.removeItem('user'); // Remove user from storage
+          state.currentUser = null;
           message.success("Account deleted successfully!");
           setDeleteModalVisible(false);
+          window.location.replace('/'); 
         }}
         okText="Delete"
         okType="danger"
@@ -137,9 +122,9 @@ const Profile = () => {
       >
         <p>Are you sure you want to delete your account?</p>
       </Modal>
+
     </div>
   );
 };
-
 
 export default Profile;

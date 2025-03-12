@@ -29,12 +29,12 @@ const getUsers = async (req,res)=> {
 
 //add user...
 const addUser = async (req,res)=> {
-    const {name, email, password, phone, address} = req.body
+    const {name, email, password, phone, address,picture} = req.body
     const Password = await bcrypt.hash(password, 10)
     try{
         const exist = await UserSchema.findOne({email:email})
         if(!exist){
-            const response = await UserSchema.create({name, email, password:Password, phone, address})
+            const response = await UserSchema.create({name, email, password:Password, phone, address,picture})
             res.status(200).json(response)
         }
         else{
@@ -46,14 +46,33 @@ const addUser = async (req,res)=> {
 }
 
 
+// const addUser = async (req, res) => {
+//     const { name, email, password, phone, address, picture } = req.body;
+//     try {
+//         const existingUser = await UserSchema.findOne({ email });
+//         if (existingUser) return res.status(409).json({ error: "Email already exists." });
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newUser = await UserSchema.create({ name, email, password: hashedPassword, phone, address, picture });
+
+//         res.status(201).json(newUser);
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to register user." });
+//     }
+// };
+
+
 //update user...
 const updateUser = async (req,res)=> {
     const {id} = req.params
     try{
         const response = await UserSchema.findByIdAndUpdate({_id:id}, {...req.body})
+        console.log("check payload",response)
+        console.log("req.body",req.body)
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error: error})
+        console.log("print error",error)
     }
 }
 

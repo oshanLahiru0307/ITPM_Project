@@ -2,6 +2,10 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
+
+
+app.use('/uploads', express.static('uploads'));
+
 const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 const ItemRouter = require('./routers/ItemRoutes')
@@ -32,4 +36,3 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((error) => {
     console.log(error)
 })
-
