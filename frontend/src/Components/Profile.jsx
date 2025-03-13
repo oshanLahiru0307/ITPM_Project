@@ -6,6 +6,7 @@ import state from '../State/state';
 const Profile = () => {
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [satisfactionModalVisible, setSatisfactionModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [user, setUser] = useState(null);
@@ -48,7 +49,19 @@ const Profile = () => {
     }
   };
 
-  
+  const deleteUser = async () => {
+    try {
+      await UserController.deleteUser(user._id);
+      message.success('User Deleted Successfully');
+      localStorage.removeItem('user'); // Remove user from local storage
+      setUser(null); // Clear the state
+      setDeleteModalVisible(false);
+      window.location.replace('/'); // Redirect after deletion
+    } catch (error) {
+      console.error("Error while deleting", error);
+      message.error("Failed to delete account");
+    }
+  };
 
   if (!user) {
     return <p>Loading user data...</p>;
@@ -75,7 +88,6 @@ const Profile = () => {
             <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Address:</strong> <span>{user.address || 'Add address'}</span></p>
             <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
-
           </div>
           <div style={{ marginTop: '80px', display: 'flex', gap: '20px' }}>
             <Button type="primary" onClick={handleEdit}>Edit Profile</Button>
@@ -84,6 +96,7 @@ const Profile = () => {
         </Card>
       </Card>
 
+      {/* Edit Profile Modal */}
       <Modal title="Edit Profile" open={editModalVisible} onCancel={() => setEditModalVisible(false)} onOk={handleSave}>
         <Form form={form} layout="vertical">
           <Form.Item label="Profile Picture">
@@ -106,13 +119,16 @@ const Profile = () => {
           </Form.Item>
         </Form>
       </Modal>
-      {/* Delete Confirmation Modal */}
+
+      {/* Confirm Delete Modal */}
       <Modal
         title="Confirm Delete"
         open={deleteModalVisible}
         onCancel={() => setDeleteModalVisible(false)}
+        // onOk={deleteUser}
+
         onOk={() => {
-          localStorage.removeItem('user'); // Remove user from storage
+          deleteUser('user');
           state.currentUser = null;
           message.success("Account deleted successfully!");
           setDeleteModalVisible(false);
@@ -124,7 +140,6 @@ const Profile = () => {
       >
         <p>Are you sure you want to delete your account?</p>
       </Modal>
-
     </div>
   );
 };
