@@ -18,11 +18,11 @@ const Login = () => {
                 const response = await UserController.loginUser(values);
                 if (response) {
                     navigate('/dashboard');
-                    state.currentUser = response.user
-                    state.token = response.token
+                    state.currentUser = response.user;
+                    state.token = response.token;
                     localStorage.setItem("user", JSON.stringify(state.currentUser));
                     localStorage.setItem("token", state.token);
-                    console.log(state.currentUser)
+                    console.log(state.currentUser);
                 } else {
                     message.error("Invalid username or password");
                     return;
@@ -56,7 +56,6 @@ const Login = () => {
         >
             <Card
                 style={{
-                    //hello..
                     width: 400,
                     height: 350,
                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
@@ -68,16 +67,14 @@ const Login = () => {
                     name="basic"
                     layout="vertical"
                     initialValues={{ remember: true }}
-                    onFinish={onFinish}  // ✅ FIXED: Passing function correctly
+                    onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
                     <Form.Item
                         label="Email"
                         name="email"
-                        rules={[
-                            { required: true, message: 'Please input your username!' },
-                        ]}
+                        rules={[{ required: true, message: 'Please input your email!' }]}
                     >
                         <Input />
                     </Form.Item>
@@ -85,9 +82,7 @@ const Login = () => {
                     <Form.Item
                         label="Password"
                         name="password"
-                        rules={[
-                            { required: true, message: 'Please input your password!' },
-                        ]}
+                        rules={[{ required: true, message: 'Please input your password!' }]}
                     >
                         <Input.Password />
                     </Form.Item>
@@ -95,6 +90,16 @@ const Login = () => {
                     <Form.Item name="remember" valuePropName="checked">
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
+
+                    <p style={{ textAlign: 'left' }}>
+                        Don't have an account?{' '}
+                        <span 
+                            style={{ color: '#1890ff', cursor: 'pointer' }} 
+                            onClick={() => navigate('/register')}
+                        >
+                            Register Now
+                        </span>
+                    </p>
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" loading={loading} block>

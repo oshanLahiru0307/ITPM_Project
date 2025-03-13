@@ -48,6 +48,8 @@ const Profile = () => {
     }
   };
 
+  
+
   if (!user) {
     return <p>Loading user data...</p>;
   }
