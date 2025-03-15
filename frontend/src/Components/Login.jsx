@@ -1,112 +1,133 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Checkbox, Form, Input, Card, message } from 'antd';
-import state from '../State/state';
-import UserController from '../Services/UserController';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Flex, Form, Button, Input, Card, Typography, message } from "antd";
+import UserController from "../Services/UserController";
+import state from "../State/state";
+
+const { Title } = Typography;
 
 const Login = () => {
     const navigate = useNavigate();
+    const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
-    const onFinish = async (values) => {
+    const handleLogin = async (values) => {
         setLoading(true);
-
-        if (values.email === 'admin@gmail.com' && values.password === 'admin123') {
-            navigate('/admindashboard');
+        
+        if (values.email === "admin@gmail.com" && values.password === "admin123") {
+            navigate("/admindashboard");
         } else {
             try {
                 const response = await UserController.loginUser(values);
                 if (response) {
-                    navigate('/dashboard');
+                    navigate("/dashboard");
                     state.currentUser = response.user;
                     state.token = response.token;
                     localStorage.setItem("user", JSON.stringify(state.currentUser));
                     localStorage.setItem("token", state.token);
-                    console.log(state.currentUser);
                 } else {
                     message.error("Invalid username or password");
-                    return;
                 }
             } catch (error) {
-                console.error('Error while logging in:', error);
-                message.error('Login failed');
+                console.error("Error while logging in:", error);
+                message.error("Login failed");
             } finally {
                 setLoading(false);
             }
         }
     };
 
-    const onFinishFailed = (errorInfo) => {
-        console.log("Failed:", errorInfo);
-        message.error("Please fill in all fields");
-    };
-
     return (
         <div
             style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                width: '100%',
-                backgroundImage: 'url("https://img.freepik.com/free-photo/vivid-blurred-colorful-background_58702-2655.jpg?t=st=1739886009~exp=1739889609~hmac=a882aea7036d17b9aec6dd8a3992dd2be1a09da78209f9ba8c15a93ab571f357&w=996")', 
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                width: "100%",
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#F0F8FF",
             }}
         >
             <Card
+                hoverable
                 style={{
-                    width: 400,
-                    height: 350,
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.9)',
+                    minHeight: "500px",
+                    width: "900px",
+                    borderRadius: "15px",
                 }}
             >
-                <Form
-                    name="basic"
-                    layout="vertical"
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[{ required: true, message: 'Please input your email!' }]}
+                <Flex justify="space-between" align="center" style={{ height: "100%" }}>
+                    {/* Left Side - Login Form */}
+                    <Flex
+                        vertical
+                        style={{
+                            width: "50%",
+                            padding: "20px",
+                        }}
                     >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Password"
-                        name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-
-                    <Form.Item name="remember" valuePropName="checked">
-                        <Checkbox>Remember me</Checkbox>
-                    </Form.Item>
-
-                    <p style={{ textAlign: 'left' }}>
-                        Don't have an account?{' '}
-                        <span 
-                            style={{ color: '#1890ff', cursor: 'pointer' }} 
-                            onClick={() => navigate('/register')}
-                        >
-                            Register Now
-                        </span>
-                    </p>
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading} block>
+                        <Title level={3} style={{ textAlign: "center" }}>
                             Login
-                        </Button>
-                    </Form.Item>
-                </Form>
+                        </Title>
+                        <Form
+                            form={form}
+                            layout="vertical"
+                            onFinish={handleLogin}
+                            style={{ width: "100%" }}
+                        >
+                            <Form.Item
+                                label="Email"
+                                name="email"
+                                rules={[{ required: true, message: "Please enter your email!" }]}
+                            >
+                                <Input placeholder="Enter your email" />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Password"
+                                name="password"
+                                rules={[{ required: true, message: "Please enter your password!" }]}
+                            >
+                                <Input.Password placeholder="Enter your password" />
+                            </Form.Item>
+
+                            <p style={{ textAlign: 'left' }}>
+                                Don't have an account?{' '}
+                                <span 
+                                    style={{ color: '#1890ff', cursor: 'pointer' }} 
+                                    onClick={() => navigate('/register')}
+                                >
+                                    Register Now
+                                </span>
+                            </p>
+
+                            <Button type="primary" htmlType="submit" loading={loading} block>
+                                Login
+                            </Button>
+                        </Form>
+                    </Flex>
+
+                    {/* Right Side - Image */}
+                    <Flex
+                        justify="center"
+                        align="center"
+                        style={{
+                            width: "50%",
+                            height: "100%",
+                            padding: "20px",
+                        }}
+                    >
+                        <img
+                            src="https://images.pexels.com/photos/4195324/pexels-photo-4195324.jpeg?auto=compress&cs=tinysrgb&w=600"
+                            alt="Login"
+                            style={{
+                                width: "90%",
+                                height: "400px",
+                                borderRadius: "10px",
+                                objectFit: "cover",
+                            }}
+                        />
+                    </Flex>
+                </Flex>
             </Card>
         </div>
     );
