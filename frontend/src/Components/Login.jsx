@@ -51,9 +51,15 @@ const Login = () => {
             <Card
                 hoverable
                 style={{
+                    width: 400,
+                    height: 350,
+                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.9)',
                     minHeight: "500px",
                     width: "900px",
                     borderRadius: "15px",
+
                 }}
             >
                 <Flex justify="space-between" align="center" style={{ height: "100%" }}>

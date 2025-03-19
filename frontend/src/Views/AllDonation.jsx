@@ -11,7 +11,7 @@ const columns = [
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
     { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
     { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
-    { title: 'Owner', dataIndex: 'user', key: 'user' },
+    { title: 'Owner', dataIndex: 'userName', key: 'userName' },
 ]
 const AllDonation = () => {
     const [donation, setDonation] = useState([])
