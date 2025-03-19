@@ -34,13 +34,12 @@ const Register = () => {
             <Card
                 hoverable
                 style={{
-                    height: "600px",
+                    minHeight: "600px",
                     width: "900px",
-                    borderRadius: "15px",
-
+                    borderRadius: "15px"
                 }}
             >
-                <Flex justify="space-between" align="center" style={{ height: "100%", padding: '10px' }}>
+                <Flex justify="space-between" align="center" style={{ height: "100%", paddingb: '10px' }}>
                     {/* Left Side - Registration Form */}
                     <Flex
                         vertical
@@ -112,6 +111,15 @@ const Register = () => {
                                 <Input.Password placeholder="Enter your password" />
                             </Form.Item>
 
+                            <p style={{ textAlign: 'left' }}>
+                        Do you have an account?{' '}
+                        <span 
+                            style={{ color: '#1890ff', cursor: 'pointer' }} 
+                            onClick={() => navigate('/')}
+                        >
+                            Login Now
+                        </span>
+                    </p>
 
                             <Button type="primary" htmlType="submit" block>
                                 Register

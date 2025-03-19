@@ -1,72 +1,83 @@
-import React, { useState } from 'react';
-import { Card, Button, Form, Input, Modal, message, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Form, Input, Modal, message } from 'antd';
+import UserController from '../Services/UserController';
+import state from '../State/state';
 
 const Profile = () => {
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [satisfactionModalVisible, setSatisfactionModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState({
-    picture: 'https://www.example.com/user-picture.jpg',
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+1234567890',
-    address: '123 Main Street, City, Country'
-  });
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user')) || state.currentUser;
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
 
   const handleEdit = () => {
     form.setFieldsValue(user);
     setEditModalVisible(true);
-    setPreviewImage(user.picture); // Set the preview image
+    setPreviewImage(user?.picture);
   };
 
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
-      setUser({ ...values, picture: previewImage || user.picture });
+      const updatedUser = { ...user, ...values, picture: previewImage || user?.picture };
+      await UserController.updateUser(user._id, updatedUser);
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      state.currentUser = updatedUser;
       setEditModalVisible(false);
       message.success("Profile updated successfully!");
     } catch (error) {
-      console.error("Validation Failed:", error);
+      console.error("Error updating profile", error);
+      message.error("Failed to update profile");
     }
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewImage(imageUrl);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
+  const deleteUser = async () => {
+    try {
+      await UserController.deleteUser(user._id);
+      message.success('User Deleted Successfully');
+      localStorage.removeItem('user'); // Remove user from local storage
+      setUser(null); // Clear the state
+      setDeleteModalVisible(false);
+      window.location.replace('/'); // Redirect after deletion
+    } catch (error) {
+      console.error("Error while deleting", error);
+      message.error("Failed to delete account");
+    }
+  };
+
+  if (!user) {
+    return <p>Loading user data...</p>;
+  }
+
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#F0F8FF',
-      minHeight: '100vh'
-    }}>
-      <Card
-        hoverable={true}
-        style={{
-          width: '100%',
-          minHeight: '663px',
-        }}
-        title={<h3 style={{ color: '#007FFF' }}>Users</h3>}
-      >
+    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
+      <Card hoverable style={{ width: '100%', minHeight: '663px' }} title={<h3 style={{ color: '#007FFF' }}>User Profile</h3>}>
         <Card style={{ width: '50vw', padding: '20px', textAlign: 'left' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <img
-              src={user.picture}
-              alt="User"
-              style={{ width: '80px', height: '80px', borderRadius: '50%' }}
-            />
+            <img src={user.picture} alt="User" style={{ width: '80px', height: '80px', borderRadius: '50%' }} />
             <div>
               <h3>{user.name}</h3>
               <p>{user.email}</p>
             </div>
-          </div >
+          </div>
           <hr style={{ margin: '15px 0' }} />
           <div style={{ marginTop: '50px' }}>
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>User Name:</strong> <span>{user.name || 'Add name'}</span></p>
@@ -77,7 +88,6 @@ const Profile = () => {
             <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
             <p style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Address:</strong> <span>{user.address || 'Add address'}</span></p>
             <hr style={{ margin: '10px 0', border: '0', height: '1px', backgroundColor: '#ddd', opacity: '0.5' }} />
-
           </div>
           <div style={{ marginTop: '80px', display: 'flex', gap: '20px' }}>
             <Button type="primary" onClick={handleEdit}>Edit Profile</Button>
@@ -87,12 +97,7 @@ const Profile = () => {
       </Card>
 
       {/* Edit Profile Modal */}
-      <Modal
-        title="Edit Profile"
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={handleSave}
-      >
+      <Modal title="Edit Profile" open={editModalVisible} onCancel={() => setEditModalVisible(false)} onOk={handleSave}>
         <Form form={form} layout="vertical">
           <Form.Item label="Profile Picture">
             <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -115,14 +120,19 @@ const Profile = () => {
         </Form>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
+      {/* Confirm Delete Modal */}
       <Modal
         title="Confirm Delete"
         open={deleteModalVisible}
         onCancel={() => setDeleteModalVisible(false)}
+        // onOk={deleteUser}
+
         onOk={() => {
+          deleteUser('user');
+          state.currentUser = null;
           message.success("Account deleted successfully!");
           setDeleteModalVisible(false);
+          window.location.replace('/'); 
         }}
         okText="Delete"
         okType="danger"

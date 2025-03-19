@@ -1,12 +1,19 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 const express = require('express')
+const bodyParser =require('body-parser')
 const app = express()
+const cors = require('cors')
+
+app.use(bodyParser.json({limit:'50mb'}))
+app.use(bodyParser.urlencoded({limit:'50mb',extended :true}))
+app.use('/uploads', express.static('uploads'));
+
 const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 const ItemRouter = require('./routers/ItemRoutes')
 const donation = require('./routers/DonationROuter')
-const cors = require('cors')
+
 
 
 //midlewere...
@@ -32,4 +39,3 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((error) => {
     console.log(error)
 })
-
