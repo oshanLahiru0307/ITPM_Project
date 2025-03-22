@@ -8,7 +8,7 @@ import CategoryController from '../Services/CategoryController';
 
 const { Option } = Select;
 
-const MyDonations = () => {
+const MyDonations = ({ refresh }) => {
 
     const columns = [
         { title: 'Name', dataIndex: 'name', key: 'name' },
@@ -70,7 +70,7 @@ const MyDonations = () => {
         }
         fetchDonation();
         fetchCategories();
-    }, []);
+    }, [refresh]);
 
     // Handle opening edit modal and setting form fields
     const handleEdit = (values) => {
