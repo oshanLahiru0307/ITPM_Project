@@ -102,7 +102,7 @@ const AdminDonation = () => {
 
   return (
     <div style={{ padding: "20px", backgroundColor: "#F0F8FF", minHeight: "100vh" }}>
-      <Card hoverable={true} style={{ width: "100%", height: "auto" }} title={<h3 style={{ color: "#007FFF" }}>Donations</h3>}>
+      <Card hoverable={true} style={{ width: "100%", height: "663px" }} title={<h3 style={{ color: "#007FFF" }}>Donations</h3>}>
         <Search
           placeholder="Search by Item Name or Owner"
           onSearch={handleSearch}
