@@ -18,6 +18,7 @@ const MyDonations = ({ refresh }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [form] = Form.useForm();
+    const [sortedInfo, setSortedInfo] = useState({});
     const snap = useSnapshot(state);
     const user = snap.currentUser?._id;
 
@@ -68,10 +69,26 @@ const MyDonations = ({ refresh }) => {
         doc.setFontSize(18);
         doc.text('Donation List', 14, 16);
 
-        // Use the filtered donations for the PDF generation (including search and sort)
+        // Sort Data for PDF
+        const sortedData = [...filteredDonations].sort((a, b) => {
+            if (!sortedInfo.field) return 0;
+            let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
+            let valueA = a[sortedInfo.field];
+            let valueB = b[sortedInfo.field];
+            if (typeof valueA === 'string') {
+                valueA = valueA.toLowerCase();
+                valueB = valueB.toLowerCase();
+            }
+            if (sortedInfo.field === 'mfd' || sortedInfo.field === 'expd') {
+                valueA = moment(valueA).unix();
+                valueB = moment(valueB).unix();
+            }
+            return valueA > valueB ? sortOrder : valueA < valueB ? -sortOrder : 0;
+        });
+
         const headers = ['Name', 'Description', 'Category', 'Qty', 'Manufacturing Date', 'Expiry Date'];
 
-        const data = filteredDonations.map(donation => [
+        const data = sortedData.map(donation => [
             donation.name,
             donation.description,
             donation.category,
@@ -107,8 +124,8 @@ const MyDonations = ({ refresh }) => {
         setSelectedItem(record);
         form.setFieldsValue({
             ...record,
-            mfd: record.mfd ? moment(record.mfd) : null,  // Convert to Moment.js
-            expd: record.expd ? moment(record.expd) : null,  // Convert to Moment.js
+            mfd: record.mfd ? moment(record.mfd) : null,
+            expd: record.expd ? moment(record.expd) : null,
         });
         setModalVisible(true);
     };
@@ -119,8 +136,27 @@ const MyDonations = ({ refresh }) => {
         { title: 'Description', dataIndex: 'description', key: 'description', sorter: (a, b) => a.description.localeCompare(b.description) },
         { title: 'Category', dataIndex: 'category', key: 'category', sorter: (a, b) => a.category.localeCompare(b.category) },
         { title: 'Qty', dataIndex: 'qty', key: 'qty', sorter: (a, b) => a.qty - b.qty },
-        { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd', sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1 },
-        { title: 'Expiry Date', dataIndex: 'expd', key: 'expd', sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1 },
+        { 
+          title: 'Manufacturing Date', 
+          dataIndex: 'mfd', 
+          key: 'mfd', 
+          sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
+          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+        },
+        { 
+          title: 'Expiry Date', 
+          dataIndex: 'expd', 
+          key: 'expd', 
+          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+        },
+        { 
+            title: 'Added Date', 
+            dataIndex: 'updatedAt', 
+            key: 'updatedAt', 
+            sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+            render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+          },
         {
             title: 'Action', key: 'action',
             render: (_, record) => (
@@ -136,9 +172,14 @@ const MyDonations = ({ refresh }) => {
         }
     ];
 
+    // Handle table change for sorting
+    const handleTableChange = (pagination, filters, sorter) => {
+        setSortedInfo(sorter);
+    };
+
     return (
         <div>
-            <Button type="primary" onClick={generatePDF} style={{ float:'right', marginBottom: '20px' }}>
+            <Button type="primary" onClick={generatePDF} style={{ float: 'right', marginBottom: '20px' }}>
                 Generate PDF
             </Button>
             <Search
@@ -149,7 +190,7 @@ const MyDonations = ({ refresh }) => {
                 onSearch={handleSearch}
                 style={{ marginBottom: '20px', width: '20%' }}
             />
-            <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }} />
+            <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }} onChange={handleTableChange} />
         </div>
     );
 };

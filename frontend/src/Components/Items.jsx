@@ -136,13 +136,39 @@ const Items = () => {
 
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
-    { title: 'Category', dataIndex: 'category', key: 'category' },
+    { title: 'Name', dataIndex: 'name', key: 'name',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+    },
+    { title: 'Description', dataIndex: 'description', key: 'description',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+    },
+    { title: 'Price', dataIndex: 'price', key: 'price',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+    },
+    { title: 'Category', dataIndex: 'category', key: 'category',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1, },
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
-    { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
-    { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
+        { 
+          title: 'Manufacturing Date', 
+          dataIndex: 'mfd', 
+          key: 'mfd', 
+          sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
+          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+        },
+        { 
+          title: 'Expiry Date', 
+          dataIndex: 'expd', 
+          key: 'expd', 
+          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+        },
+        { 
+          title: 'Added Date', 
+          dataIndex: 'updatedAt', 
+          key: 'updatedAt', 
+          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+        },
     {
       title: 'Action',
       key: 'action',
