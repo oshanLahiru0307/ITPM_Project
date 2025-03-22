@@ -1,43 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useSnapshot } from "valtio";
 import { Table, message, Button, Modal, Select, Input, InputNumber, Form, DatePicker } from 'antd';
-import moment from 'moment'; // Import Moment.js for date conversion
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
+import moment from 'moment';
 import state from '../State/state.js';
 import DonationController from '../Services/DonationController';
 import CategoryController from '../Services/CategoryController';
 
 const { Option } = Select;
+const { Search } = Input;
 
 const MyDonations = ({ refresh }) => {
-
-    const columns = [
-        { title: 'Name', dataIndex: 'name', key: 'name' },
-        { title: 'Description', dataIndex: 'description', key: 'description' },
-        { title: 'Category', dataIndex: 'category', key: 'category' },
-        { title: 'Qty', dataIndex: 'qty', key: 'qty' },
-        { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd' },
-        { title: 'Expiry Date', dataIndex: 'expd', key: 'expd' },
-        {
-            title: 'Action', key: 'action',
-            render: (_, record) => (
-                <span>
-                    <Button type='primary' danger
-                        style={{ marginRight: '10px' }}
-                        onClick={() => handleDeleteItem(record._id)}>
-                        Delete
-                    </Button>
-                    <Button type='primary' onClick={() => handleEdit(record)}>
-                        Edit
-                    </Button>
-                </span>
-            )
-        }
-    ];
-
     const [donations, setDonations] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [searchText, setSearchText] = useState("");
     const [categories, setCategories] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
     const [form] = Form.useForm();
     const snap = useSnapshot(state);
     const user = snap.currentUser?._id;
@@ -72,50 +51,46 @@ const MyDonations = ({ refresh }) => {
         fetchCategories();
     }, [refresh]);
 
-    // Handle opening edit modal and setting form fields
-    const handleEdit = (values) => {
-        setSelectedItem(values);
-        form.setFieldsValue({
-            ...values,
-            mfd: values.mfd ? moment(values.mfd) : null, // Convert to Moment.js
-            expd: values.expd ? moment(values.expd) : null, // Convert to Moment.js
+    // Handle search
+    const handleSearch = (value) => {
+        setSearchText(value);
+    };
+
+    // Filter donations based on search text
+    const filteredDonations = donations.filter(donation =>
+        donation.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        donation.description.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    // Generate PDF
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text('Donation List', 14, 16);
+
+        // Use the filtered donations for the PDF generation (including search and sort)
+        const headers = ['Name', 'Description', 'Category', 'Qty', 'Manufacturing Date', 'Expiry Date'];
+
+        const data = filteredDonations.map(donation => [
+            donation.name,
+            donation.description,
+            donation.category,
+            donation.qty,
+            donation.mfd ? moment(donation.mfd).format('YYYY-MM-DD') : '',
+            donation.expd ? moment(donation.expd).format('YYYY-MM-DD') : ''
+        ]);
+
+        autoTable(doc, {
+            head: [headers],
+            body: data,
+            startY: 30,
+            theme: 'grid'
         });
-        setModalVisible(true);
+
+        doc.save('donations.pdf');
     };
 
-    // Handle donation update
-    const handleEditDonation = async (values) => {
-        if (selectedItem) {
-            try {
-                if (!user) {
-                    message.error("User not logged in");
-                    return;
-                }
-
-                const formattedValues = {
-                    ...values,
-                    user: user, // Attach logged-in user
-                    mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null, // Convert back to string
-                    expd: values.expd ? values.expd.format('YYYY-MM-DD') : null, // Convert back to string
-                };
-
-                console.log("Submitting Data:", formattedValues);
-
-                await DonationController.updatedonation(selectedItem._id, formattedValues);
-                setModalVisible(false);
-                form.resetFields();
-                message.success('Donation updated successfully');
-                fetchDonation(); // Refresh data
-            } catch (error) {
-                console.error('Error while updating donation:', error);
-                message.error('Failed to update donation');
-            }
-        } else {
-            console.error('No item selected for editing');
-        }
-    };
-
-    // Handle delete...
+    // Handle deleting donation
     const handleDeleteItem = async (id) => {
         try {
             await DonationController.deleteDonation(id);
@@ -125,50 +100,56 @@ const MyDonations = ({ refresh }) => {
             console.error("Error deleting donation:", error);
             message.error("Failed to delete donation");
         }
-    }
+    };
+
+    // Handle editing donation
+    const handleEdit = (record) => {
+        setSelectedItem(record);
+        form.setFieldsValue({
+            ...record,
+            mfd: record.mfd ? moment(record.mfd) : null,  // Convert to Moment.js
+            expd: record.expd ? moment(record.expd) : null,  // Convert to Moment.js
+        });
+        setModalVisible(true);
+    };
+
+    // Table columns
+    const columns = [
+        { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
+        { title: 'Description', dataIndex: 'description', key: 'description', sorter: (a, b) => a.description.localeCompare(b.description) },
+        { title: 'Category', dataIndex: 'category', key: 'category', sorter: (a, b) => a.category.localeCompare(b.category) },
+        { title: 'Qty', dataIndex: 'qty', key: 'qty', sorter: (a, b) => a.qty - b.qty },
+        { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd', sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1 },
+        { title: 'Expiry Date', dataIndex: 'expd', key: 'expd', sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1 },
+        {
+            title: 'Action', key: 'action',
+            render: (_, record) => (
+                <span>
+                    <Button type='primary' danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
+                        Delete
+                    </Button>
+                    <Button type='primary' onClick={() => handleEdit(record)}>
+                        Edit
+                    </Button>
+                </span>
+            )
+        }
+    ];
 
     return (
         <div>
-            <Table dataSource={donations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }}/>
-
-            <Modal
-                title="Edit Donation"
-                open={modalVisible}
-                onCancel={() => { setModalVisible(false); form.resetFields(); }}
-                onOk={() => {
-                    form.validateFields()
-                        .then(values => handleEditDonation(values))
-                        .catch(error => console.log("Validation Failed:", error));
-                }}
-            >
-                <Form form={form} layout="vertical">
-                    <Form.Item name="name" label="Item Name" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="description" label="Description" rules={[{ required: true }]}>
-                        <Input.TextArea />
-                    </Form.Item>
-                    <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-                        <Select placeholder="Select a category">
-                            {categories.map((category) => (
-                                <Option key={category._id} value={category.name}>{category.name}</Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item name="mfd" label="Manufacture Date">
-                        <DatePicker style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item name="expd" label="Expiry Date">
-                        <DatePicker style={{ width: '100%' }} />
-                    </Form.Item>
-                </Form>
-            </Modal>
+            <Button type="primary" onClick={generatePDF} style={{ float:'right', marginBottom: '20px' }}>
+                Generate PDF
+            </Button>
+            <Search
+                placeholder="Search Donations"
+                allowClear
+                enterButton="Search"
+                size="medium"
+                onSearch={handleSearch}
+                style={{ marginBottom: '20px', width: '20%' }}
+            />
+            <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }} />
         </div>
     );
 };

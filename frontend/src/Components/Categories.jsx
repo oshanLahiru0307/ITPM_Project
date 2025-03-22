@@ -1,75 +1,123 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import { Table, Button, message, Form, Modal, Input, Card } from 'antd'
-import CategoryController from '../Services/CategoryController'
+import React, { useState, useEffect } from 'react';
+import { Table, Button, message, Form, Modal, Input, Card, Input as AntInput } from 'antd';
+import CategoryController from '../Services/CategoryController';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+const { Search } = AntInput;
 
 const Categories = () => {
-
-  const [form] = Form.useForm()
-  const [categories, SetCategories] = useState([])
-  const [selectedItem, SetselectedItem] = useState()
-  const [modalVisible, SetmodalVisible] = useState(false)
+  const [form] = Form.useForm();
+  const [categories, setCategories] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [sortedInfo, setSortedInfo] = useState({});
 
   const fetchCategories = async () => {
     try {
-      const data = await CategoryController.getAllCategories()
-      SetCategories(data)
+      const data = await CategoryController.getAllCategories();
+      setCategories(data);
+      setFilteredData(data); // Initialize filtered data
     } catch (error) {
-      console.error('error while fetching categories', error)
+      console.error('error while fetching categories', error);
     }
-  }
+  };
 
   const handleAddCategory = async (values) => {
-
     try {
       if (!selectedItem) {
-        await CategoryController.addCategory(values)
-        console.log("data added successfuly!")
-
+        await CategoryController.addCategory(values);
+        console.log('data added successfuly!');
       } else {
-        await CategoryController.updateCategory(selectedItem._id, values)
-        console.log('data updated successfuly')
+        await CategoryController.updateCategory(selectedItem._id, values);
+        console.log('data updated successfuly');
       }
-      SetmodalVisible(false)
-      message.success('Category  saved successfuly')
-      fetchCategories()
+      setModalVisible(false);
+      message.success('Category saved successfuly');
+      fetchCategories();
     } catch (error) {
-      console.error(error)
-      message.error('failed to saved item!')
+      console.error(error);
+      message.error('failed to saved item!');
     }
-  }
+  };
 
   const handleEdit = (record) => {
-    SetselectedItem(record)
-    form.setFieldsValue(record)
-    SetmodalVisible(true)
-  }
+    setSelectedItem(record);
+    form.setFieldsValue(record);
+    setModalVisible(true);
+  };
 
   const handleDelete = async (categoryId) => {
     try {
-      await CategoryController.deleteCategory(categoryId)
-      message.success("Category deleted successfuly")
-      fetchCategories()
+      await CategoryController.deleteCategory(categoryId);
+      message.success('Category deleted successfuly');
+      fetchCategories();
     } catch (error) {
-      console.error(error)
-      message.error("Faled to delete Category!")
+      console.error(error);
+      message.error('Faled to delete Category!');
     }
-  }
+  };
 
-  const handleCancle = () => {
-    SetmodalVisible(false);
+  const handleCancel = () => {
+    setModalVisible(false);
     form.resetFields();
-    SetselectedItem(null);
-  }
+    setSelectedItem(null);
+  };
 
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
+
+  const handleSearch = (value) => {
+    const filtered = categories.filter((category) =>
+      category.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text('Category Report', 14, 10);
+    const columns = ['#', 'Name', 'Description', 'Date'];
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      if (!sortedInfo.field) return 0;
+      let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
+      let valueA = a[sortedInfo.field];
+      let valueB = b[sortedInfo.field];
+      return valueA.localeCompare(valueB) * sortOrder;
+    });
+
+    const rows = sortedData.map((category, index) => [
+      index + 1,
+      category.name,
+      category.description,
+      new Date(category.createdAt).toLocaleDateString(),
+    ]);
+
+    autoTable(doc, {
+      head: [columns],
+      body: rows,
+      startY: 20,
+    });
+    doc.save('Category_Report.pdf');
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setSortedInfo(sorter);
+  };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Date', dataIndex: 'createdAt', key: 'date' },
+    { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
+    { title: 'Description', dataIndex: 'description', key: 'description', sorter: (a, b) => a.description.localeCompare(b.description) },
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+      key: 'date',
+      render: (text) => new Date(text).toLocaleDateString(),
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+    },
     {
       title: 'Action',
       key: 'action',
@@ -83,70 +131,43 @@ const Categories = () => {
           </Button>
         </>
       ),
-    }
-  ]
+    },
+  ];
 
   return (
-    <div
-      style={{
-        padding: '20px',
-        backgroundColor: '#F0F8FF',
-        minHeight: '100vh'
-      }}>
-      <Card
-        hoverable={true}
-        style={{
-          width: '100%',
-          height: '663px',
-        }}
-        title={<h3
-          style={{
-            color: '#007FFF'
-          }}>Categories</h3>}
+    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
+      <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>Categories</h3>}
+        extra={<Button type='primary' style={{ float: 'right' }} onClick={() => { setModalVisible(true) }}>+ Add Category</Button>}>
 
-        extra={<Button type='primary'
-          style={{
-            float: 'right'
-          }}
-
-          onClick={() => {
-            SetmodalVisible(true)
-          }}>+ Add Category</Button>}>
-
-
-
-        <Table dataSource={categories} columns={columns} />
-        <Modal
-          title={selectedItem ? 'Edit Item' : 'Add Item'}
-          open={modalVisible}
-          onCancel={handleCancle}
-          onOk={() => {
-            form
-              .validateFields()
-              .then((values) => {
-                handleAddCategory(values);
-                form.resetFields();
-              })
-              .catch((info) => {
-                console.log("Validate Failed:", info);
-              });
-          }}
+        <Search
+          placeholder="Search by Category Name"
+          onSearch={handleSearch}
+          allowClear
+          enterButton="Search"
+          size="medium"
+          style={{ width: 300, marginBottom: 20 }}
+        />
+        <Button
+          type="primary"
+          onClick={generatePDF}
+          style={{ marginLeft: 10, marginBottom: 20, float: 'right' }}
         >
-          <Form form={form} layout="vertical" >
+          Generate PDF
+        </Button>
+        <Table dataSource={filteredData} columns={columns} onChange={handleTableChange} />
+        <Modal title={selectedItem ? 'Edit Item' : 'Add Item'} open={modalVisible} onCancel={handleCancel} onOk={() => { form.validateFields().then((values) => { handleAddCategory(values); form.resetFields(); }).catch((info) => { console.log('Validate Failed:', info); }); }}>
+          <Form form={form} layout="vertical">
             <Form.Item name="name" label="Category" rules={[{ required: true, message: 'Please enter category name' }]}>
               <Input />
             </Form.Item>
-
             <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter description' }]}>
               <Input />
             </Form.Item>
-
           </Form>
         </Modal>
-
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Categories
+export default Categories;

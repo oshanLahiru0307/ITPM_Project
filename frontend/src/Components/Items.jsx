@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select, Card } from 'antd';
+import { EditOutlined, DeleteOutlined, GiftOutlined } from '@ant-design/icons'; // Import icons
 import itemController from '../Services/ItemController';
 import categoryController from '../Services/CategoryController';
 import DonationController from '../Services/DonationController';
@@ -9,8 +10,9 @@ import { useSnapshot } from 'valtio';
 
 const { Option } = Select;
 
+
 const Items = () => {
-  const snap = useSnapshot(state)
+  const snap = useSnapshot(state);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,10 +21,13 @@ const Items = () => {
   const [form] = Form.useForm();
   const [donateForm] = Form.useForm();
 
+
+
   useEffect(() => {
     fetchItems();
     fetchCategories();
   }, []);
+
 
   const fetchItems = async () => {
     try {
@@ -33,6 +38,7 @@ const Items = () => {
     }
   };
 
+
   const fetchCategories = async () => {
     try {
       const data = await categoryController.getAllCategories();
@@ -42,6 +48,8 @@ const Items = () => {
     }
   };
 
+
+
   const handleAddOrUpdateItem = async (values) => {
     try {
       const formattedValues = {
@@ -49,6 +57,7 @@ const Items = () => {
         mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
       };
+
 
       if (selectedItem) {
         await itemController.updateItem(selectedItem._id, formattedValues);
@@ -58,15 +67,18 @@ const Items = () => {
         message.success('Item added successfully');
       }
 
+
       fetchItems();
       setModalVisible(false);
       form.resetFields();
       setSelectedItem(null);
     } catch (error) {
-      console.error("Error saving item:", error.response?.data || error);
+      console.error('Error saving item:', error.response?.data || error);
       message.error(error.response?.data?.error || 'Failed to save item');
     }
   };
+
+
 
   const handleEditItem = (record) => {
     setSelectedItem(record);
@@ -78,6 +90,8 @@ const Items = () => {
     setModalVisible(true);
   };
 
+
+
   const handleDeleteItem = async (ItemId) => {
     try {
       await itemController.deleteItem(ItemId);
@@ -85,11 +99,11 @@ const Items = () => {
       fetchItems();
     } catch (error) {
       console.error('Failed to delete item', error);
-      message.error("Failed to delete Item");
+      message.error('Failed to delete Item');
     }
   };
 
-  // Handle Donate Button Click
+
   const handleDonateItem = (record) => {
     setSelectedItem(record);
     donateForm.setFieldsValue({
@@ -98,27 +112,28 @@ const Items = () => {
     setDonateModalVisible(true);
   };
 
-  // Handle Donate Form Submission
+
+
   const handleDonateSubmit = async (values) => {
     try {
       const donationData = {
-        user: snap.currentUser._id,
+        user: snap.currentUser._id, // Pass current user ID
         ...selectedItem,
-        qty: values.qty
- // Pass current user ID
+        qty: values.qty,
       };
 
       await DonationController.addDonation(donationData);
       message.success('Item donated successfully');
-
       setDonateModalVisible(false);
       donateForm.resetFields();
       fetchItems();
     } catch (error) {
       console.error('Error donating item:', error);
-      message.error("Failed to donate item");
+      message.error('Failed to donate item');
     }
   };
+
+
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name' },
@@ -133,19 +148,20 @@ const Items = () => {
       key: 'action',
       render: (_, record) => (
         <>
-          <Button type="primary" style={{ marginRight: '10px' }} onClick={() => handleEditItem(record)}>
+          <Button type="primary" style={{ marginRight: '5px' }} onClick={() => handleEditItem(record)}>
             Edit
           </Button>
-          <Button type="primary" danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
+          <Button type="primary" danger style={{ marginRight: '5px' }} onClick={() => handleDeleteItem(record._id)}>
             Delete
           </Button>
           <Button type="primary" style={{ background: '#5CD85A' }} onClick={() => handleDonateItem(record)}>
-            Donate
+            <GiftOutlined />
           </Button>
         </>
       ),
     },
   ];
+
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
@@ -156,7 +172,6 @@ const Items = () => {
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
       >
         <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
-
         {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
@@ -199,11 +214,10 @@ const Items = () => {
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name="expd" label="Expire Date" rules={[{ required: true }]}>
-              <DatePicker style={{ width: '100%' }}/>
+              <DatePicker style={{ width: '100%' }} />
             </Form.Item>
           </Form>
         </Modal>
-
         {/* Donate Modal */}
         <Modal
           title="Donate Item"
@@ -228,7 +242,11 @@ const Items = () => {
         </Modal>
       </Card>
     </div>
-  );
-};
 
-export default Items;
+  );
+
+}
+
+
+
+export default Items
