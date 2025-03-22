@@ -193,6 +193,13 @@ const AdminItems = () => {
       render: (text) => new Date(text).toLocaleDateString(),
     },
     {
+      title: 'Added Date',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      sorter: (a, b) => new Date(a.expd) - new Date(b.expd),
+      render: (text) => new Date(text).toLocaleDateString(),
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (_, record) => (

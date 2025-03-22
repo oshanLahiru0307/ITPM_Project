@@ -84,16 +84,23 @@ const AdminDonation = () => {
     { title: "Category", dataIndex: "category", key: "category", sorter: (a, b) => a.category.localeCompare(b.category) },
     { title: "Qty", dataIndex: "qty", key: "qty", sorter: (a, b) => a.qty - b.qty },
     {
-      title: "Manufacturing Date",
+      title: "M.F.D Date",
       dataIndex: "mfd",
       key: "mfd",
       sorter: (a, b) => new Date(a.mfd) - new Date(b.mfd),
       render: (text) => new Date(text).toLocaleDateString(), // Format date in table
     },
     {
-      title: "Expiry Date",
+      title: "Exp Date",
       dataIndex: "expd",
       key: "expd",
+      sorter: (a, b) => new Date(a.expd) - new Date(b.expd),
+      render: (text) => new Date(text).toLocaleDateString(), // Format date in table
+    },
+    {
+      title: "Added Date",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
       sorter: (a, b) => new Date(a.expd) - new Date(b.expd),
       render: (text) => new Date(text).toLocaleDateString(), // Format date in table
     },
