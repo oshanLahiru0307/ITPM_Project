@@ -205,7 +205,9 @@ const Items = () => {
       title: 'Category', dataIndex: 'category', key: 'category',
       sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
     },
-    { title: 'Qty', dataIndex: 'qty', key: 'qty' },
+    { title: 'Qty', dataIndex: 'qty', key: 'qty',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+     },
     {
       title: 'Manufacturing Date',
       dataIndex: 'mfd',
