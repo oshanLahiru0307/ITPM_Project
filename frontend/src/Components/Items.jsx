@@ -7,13 +7,18 @@ import categoryController from '../Services/CategoryController';
 import DonationController from '../Services/DonationController';
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const { Option } = Select;
+const { Search } = Input;
 
 
 const Items = () => {
   const snap = useSnapshot(state);
   const [items, setItems] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [sortedInfo, setSortedInfo] = useState({});
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [donateModalVisible, setDonateModalVisible] = useState(false);
@@ -33,6 +38,7 @@ const Items = () => {
     try {
       const data = await itemController.getItems();
       setItems(data);
+      setFilteredData(data);
     } catch (error) {
       console.error(error);
     }
@@ -133,42 +139,94 @@ const Items = () => {
     }
   };
 
+  const handleSearch = (value) => {
+    const filtered = items.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
+    setFilteredData(filtered);
+  }
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text('Item Report', 14, 10);
+    const columns = ['#', 'Name', 'Description', 'Price', 'Category', 'Qty', 'Mfg Date', 'Exp Date'];
+
+    const sortedData = [...filteredData].sort((a, b) => {
+      if (!sortedInfo.field) return 0;
+
+      let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
+      let valueA = a[sortedInfo.field];
+      let valueB = b[sortedInfo.field];
+
+      if (sortedInfo.field === 'price' || sortedInfo.field === 'qty') {
+        return (valueA - valueB) * sortOrder;
+      } else if (sortedInfo.field === 'mfd' || sortedInfo.field === 'expd') {
+        return (new Date(valueA) - new Date(valueB)) * sortOrder;
+      } else {
+        return valueA.localeCompare(valueB) * sortOrder;
+      }
+    });
+
+    const rows = sortedData.map((item, index) => [
+      index + 1,
+      item.name,
+      item.description,
+      item.price,
+      item.category,
+      item.qty,
+      new Date(item.mfd).toLocaleDateString(),
+      new Date(item.expd).toLocaleDateString(),
+    ]);
+
+    autoTable(doc, {
+      head: [columns],
+      body: rows,
+      startY: 20,
+    });
+    doc.save('Item_Report.pdf');
+  };
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setSortedInfo(sorter);
+  };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name',
+    {
+      title: 'Name', dataIndex: 'name', key: 'name',
       sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
     },
-    { title: 'Description', dataIndex: 'description', key: 'description',
+    {
+      title: 'Description', dataIndex: 'description', key: 'description',
       sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
     },
-    { title: 'Price', dataIndex: 'price', key: 'price',
+    {
+      title: 'Price', dataIndex: 'price', key: 'price',
       sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
     },
-    { title: 'Category', dataIndex: 'category', key: 'category',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1, },
+    {
+      title: 'Category', dataIndex: 'category', key: 'category',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+    },
     { title: 'Qty', dataIndex: 'qty', key: 'qty' },
-        { 
-          title: 'Manufacturing Date', 
-          dataIndex: 'mfd', 
-          key: 'mfd', 
-          sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
-          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-        },
-        { 
-          title: 'Expiry Date', 
-          dataIndex: 'expd', 
-          key: 'expd', 
-          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-        },
-        { 
-          title: 'Added Date', 
-          dataIndex: 'updatedAt', 
-          key: 'updatedAt', 
-          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-        },
+    {
+      title: 'Manufacturing Date',
+      dataIndex: 'mfd',
+      key: 'mfd',
+      sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
+      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+    },
+    {
+      title: 'Expiry Date',
+      dataIndex: 'expd',
+      key: 'expd',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+    },
+    {
+      title: 'Added Date',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+    },
     {
       title: 'Action',
       key: 'action',
@@ -196,8 +254,22 @@ const Items = () => {
         style={{ width: '100%', height: '663px' }}
         title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
-      >
-        <Table dataSource={items} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
+      >        <Search
+          placeholder="Search by Item Name"
+          onSearch={handleSearch}
+          allowClear
+          enterButton="Search"
+          size="medium"
+          style={{ width: 300, marginBottom: 20 }}
+        />
+        <Button
+          type="primary"
+          onClick={generatePDF}
+          style={{ marginLeft: 10, marginBottom: 20, float: 'right' }}
+        >
+          Generate PDF
+        </Button>
+        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
         {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
