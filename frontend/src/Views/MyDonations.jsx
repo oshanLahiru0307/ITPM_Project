@@ -12,7 +12,8 @@ const { Search } = Input;
 
 const MyDonations = ({ refresh }) => {
     const [donations, setDonations] = useState([]);
-    const [searchText, setSearchText] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
+    const [sortedInfo, setSortedInfo] = useState({})
     const [categories, setCategories] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -25,6 +26,7 @@ const MyDonations = ({ refresh }) => {
         try {
             const data = await DonationController.getUserDonation(user);
             setDonations(data);
+            setFilteredData(data)
         } catch (error) {
             console.error("Error fetching user donations:", error);
             message.error("Failed to fetch donations");
@@ -52,15 +54,50 @@ const MyDonations = ({ refresh }) => {
 
     // Handle search
     const handleSearch = (value) => {
-        setSearchText(value.toLowerCase());
+        const filteredDonations = donations.filter(donation =>
+            donation.name.toLowerCase().includes(value.toLowerCase()) ||
+            donation.description.toLowerCase().includes(value.toLowerCase()) ||
+            donation.category.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredData(filteredDonations)
     };
 
-    // Filter donations
-    const filteredDonations = donations.filter(donation =>
-        donation.name.toLowerCase().includes(searchText) ||
-        donation.description.toLowerCase().includes(searchText) ||
-        donation.category.toLowerCase().includes(searchText)
-    );
+
+    const handleTableChange = (sorter)=> {
+        setSortedInfo(sorter)
+    }
+
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.text('My Donation Report', 14, 10);
+        const columns = ['#', 'Name', 'Description', 'Category', 'Qty', 'MFD Date', 'Exf Date'];
+    
+        const sortedData = [...filteredData].sort((a, b) => {
+          if (!sortedInfo.field) return 0;
+          let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
+          let valueA = a[sortedInfo.field];
+          let valueB = b[sortedInfo.field];
+          return valueA.localeCompare(valueB) * sortOrder;
+        });
+    
+        const rows = sortedData.map((donation, index) => [
+          index + 1,
+          donation.name,
+          donation.description,
+          donation.category,
+          donation.qty,
+          new Date(donation.mfd).toLocaleDateString(),
+          new Date(donation.expd).toLocaleDateString(),
+          new Date(donation.createdAt).toLocaleDateString(),
+        ]);
+    
+        autoTable(doc, {
+          head: [columns],
+          body: rows,
+          startY: 20,
+        });
+        doc.save('My_Donation_Report.pdf');
+      };
 
     // Handle edit - Show modal
     const handleEdit = (record) => {
@@ -143,19 +180,28 @@ const MyDonations = ({ refresh }) => {
 
     return (
         <div>
-            <Search
-                placeholder="Search Donations"
-                allowClear
-                enterButton="Search"
-                size="medium"
-                onSearch={handleSearch}
-                style={{ marginBottom: '20px', width: '20%' }}
-            />
+        <Search
+          placeholder="Search by Donation"
+          onSearch={handleSearch}
+          allowClear
+          enterButton="Search"
+          size="medium"
+          style={{ width: 300, marginBottom: 20 }}
+        />
+        <Button
+        type='primary'
+        style={{
+            float:'right'
+        }}
+        onClick={generatePDF}>
+            Genarate PDF
+        </Button>
             <Table
-                dataSource={filteredDonations}
+                dataSource={filteredData}
                 columns={columns}
                 rowKey="_id"
                 pagination={{ pageSize: 5 }}
+                onChange={handleTableChange}
             />
 
             {/* Edit Modal */}
