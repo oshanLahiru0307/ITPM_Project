@@ -8,7 +8,6 @@ import state from '../State/state.js';
 import DonationController from '../Services/DonationController';
 import CategoryController from '../Services/CategoryController';
 
-const { Option } = Select;
 const { Search } = Input;
 
 const MyDonations = ({ refresh }) => {
@@ -18,12 +17,11 @@ const MyDonations = ({ refresh }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [form] = Form.useForm();
-    const [sortedInfo, setSortedInfo] = useState({});
     const snap = useSnapshot(state);
     const user = snap.currentUser?._id;
 
-    // Fetch user's donations
-    const fetchDonation = async () => {
+    // Fetch donations
+    const fetchDonations = async () => {
         try {
             const data = await DonationController.getUserDonation(user);
             setDonations(data);
@@ -33,7 +31,7 @@ const MyDonations = ({ refresh }) => {
         }
     };
 
-    // Fetch all categories
+    // Fetch categories
     const fetchCategories = async () => {
         try {
             const data = await CategoryController.getAllCategories();
@@ -48,78 +46,23 @@ const MyDonations = ({ refresh }) => {
             message.warning("User not logged in");
             return;
         }
-        fetchDonation();
+        fetchDonations();
         fetchCategories();
     }, [refresh]);
 
     // Handle search
     const handleSearch = (value) => {
-        setSearchText(value);
+        setSearchText(value.toLowerCase());
     };
 
-    // Filter donations based on search text
+    // Filter donations
     const filteredDonations = donations.filter(donation =>
-        donation.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        donation.description.toLowerCase().includes(searchText.toLowerCase())
+        donation.name.toLowerCase().includes(searchText) ||
+        donation.description.toLowerCase().includes(searchText) ||
+        donation.category.toLowerCase().includes(searchText)
     );
 
-    // Generate PDF
-    const generatePDF = () => {
-        const doc = new jsPDF();
-        doc.setFontSize(18);
-        doc.text('Donation List', 14, 16);
-
-        // Sort Data for PDF
-        const sortedData = [...filteredDonations].sort((a, b) => {
-            if (!sortedInfo.field) return 0;
-            let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
-            let valueA = a[sortedInfo.field];
-            let valueB = b[sortedInfo.field];
-            if (typeof valueA === 'string') {
-                valueA = valueA.toLowerCase();
-                valueB = valueB.toLowerCase();
-            }
-            if (sortedInfo.field === 'mfd' || sortedInfo.field === 'expd') {
-                valueA = moment(valueA).unix();
-                valueB = moment(valueB).unix();
-            }
-            return valueA > valueB ? sortOrder : valueA < valueB ? -sortOrder : 0;
-        });
-
-        const headers = ['Name', 'Description', 'Category', 'Qty', 'Manufacturing Date', 'Expiry Date'];
-
-        const data = sortedData.map(donation => [
-            donation.name,
-            donation.description,
-            donation.category,
-            donation.qty,
-            donation.mfd ? moment(donation.mfd).format('YYYY-MM-DD') : '',
-            donation.expd ? moment(donation.expd).format('YYYY-MM-DD') : ''
-        ]);
-
-        autoTable(doc, {
-            head: [headers],
-            body: data,
-            startY: 30,
-            theme: 'grid'
-        });
-
-        doc.save('donations.pdf');
-    };
-
-    // Handle deleting donation
-    const handleDeleteItem = async (id) => {
-        try {
-            await DonationController.deleteDonation(id);
-            message.success("Donation deleted successfully");
-            setDonations((prevDonations) => prevDonations.filter(donation => donation._id !== id));
-        } catch (error) {
-            console.error("Error deleting donation:", error);
-            message.error("Failed to delete donation");
-        }
-    };
-
-    // Handle editing donation
+    // Handle edit - Show modal
     const handleEdit = (record) => {
         setSelectedItem(record);
         form.setFieldsValue({
@@ -130,58 +73,76 @@ const MyDonations = ({ refresh }) => {
         setModalVisible(true);
     };
 
+    // Handle modal close
+    const handleCancel = () => {
+        setModalVisible(false);
+        setSelectedItem(null);
+        form.resetFields();
+    };
+
+    // Handle update
+    const handleUpdate = async () => {
+        try {
+            const values = await form.validateFields();
+            const updatedData = {
+                ...values,
+                mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
+                expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
+            };
+
+            await DonationController.updatedonation(selectedItem._id, updatedData);
+            message.success("Donation updated successfully");
+
+            setDonations((prev) =>
+                prev.map((donation) => (donation._id === selectedItem._id ? { ...donation, ...updatedData } : donation))
+            );
+
+            setModalVisible(false);
+            form.resetFields();
+        } catch (error) {
+            console.error("Error updating donation:", error);
+            message.error("Failed to update donation");
+        }
+    };
+
+    // Handle delete donation
+    const handleDeleteItem = async (id) => {
+        try {
+            await DonationController.deleteDonation(id);
+            message.success("Donation deleted successfully");
+
+            setDonations((prev) => prev.filter(donation => donation._id !== id));
+        } catch (error) {
+            console.error("Error deleting donation:", error);
+            message.error("Failed to delete donation");
+        }
+    };
+
     // Table columns
     const columns = [
         { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
         { title: 'Description', dataIndex: 'description', key: 'description', sorter: (a, b) => a.description.localeCompare(b.description) },
         { title: 'Category', dataIndex: 'category', key: 'category', sorter: (a, b) => a.category.localeCompare(b.category) },
         { title: 'Qty', dataIndex: 'qty', key: 'qty', sorter: (a, b) => a.qty - b.qty },
-        { 
-          title: 'Manufacturing Date', 
-          dataIndex: 'mfd', 
-          key: 'mfd', 
-          sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
-          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-        },
-        { 
-          title: 'Expiry Date', 
-          dataIndex: 'expd', 
-          key: 'expd', 
-          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-          render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-        },
-        { 
-            title: 'Added Date', 
-            dataIndex: 'updatedAt', 
-            key: 'updatedAt', 
-            sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-            render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
-          },
+        { title: 'Manufacturing Date', dataIndex: 'mfd', key: 'mfd', render: (text) => text ? moment(text).format('YYYY-MM-DD') : '' },
+        { title: 'Expiry Date', dataIndex: 'expd', key: 'expd', render: (text) => text ? moment(text).format('YYYY-MM-DD') : '' },
         {
             title: 'Action', key: 'action',
             render: (_, record) => (
-                <span>
-                    <Button type='primary' danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
-                        Delete
-                    </Button>
-                    <Button type='primary' onClick={() => handleEdit(record)}>
+                <>
+                    <Button type="primary" onClick={() => handleEdit(record)} style={{ marginRight: 10 }}>
                         Edit
                     </Button>
-                </span>
+                    <Button type="primary" danger onClick={() => handleDeleteItem(record._id)}>
+                        Delete
+                    </Button>
+                </>
             )
         }
     ];
 
-    // Handle table change for sorting
-    const handleTableChange = (pagination, filters, sorter) => {
-        setSortedInfo(sorter);
-    };
-
     return (
         <div>
-            <Button type="primary" onClick={generatePDF} style={{ float: 'right', marginBottom: '20px' }}>
-                Generate PDF
-            </Button>
             <Search
                 placeholder="Search Donations"
                 allowClear
@@ -190,7 +151,48 @@ const MyDonations = ({ refresh }) => {
                 onSearch={handleSearch}
                 style={{ marginBottom: '20px', width: '20%' }}
             />
-            <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 5 }} onChange={handleTableChange} />
+            <Table
+                dataSource={filteredDonations}
+                columns={columns}
+                rowKey="_id"
+                pagination={{ pageSize: 5 }}
+            />
+
+            {/* Edit Modal */}
+            <Modal
+                title="Edit Donation"
+                open={modalVisible}
+                onCancel={handleCancel}
+                onOk={handleUpdate}
+                okText="Update"
+            >
+                <Form form={form} layout="vertical">
+                    <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Please enter name' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="description" label="Description">
+                        <Input.TextArea />
+                    </Form.Item>
+                    <Form.Item name="category" label="Category">
+                        <Select>
+                            {categories.map(category => (
+                                <Select.Option key={category._id} value={category.name}>
+                                    {category.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="qty" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}>
+                        <InputNumber min={1} style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item name="mfd" label="Manufacturing Date">
+                        <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item name="expd" label="Expiry Date">
+                        <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
