@@ -136,7 +136,7 @@ const UserDetails = () => {
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
-      <Card hoverable style={{ width: '100%', height: 'auto' }} title={<h3 style={{ color: '#007FFF' }}>Users</h3>}>
+      <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>Users</h3>}>
         <Search
           placeholder="Search by Name, Email, Phone, or Address"
           onSearch={handleSearch}
