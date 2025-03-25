@@ -6,7 +6,7 @@ import autoTable from 'jspdf-autotable';
 
 const { Search } = AntInput;
 
-const Categories = () => {
+const AdminCategories = () => {
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -170,4 +170,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default AdminCategories;

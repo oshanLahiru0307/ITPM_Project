@@ -2,6 +2,7 @@ import Login from './Components/Login'
 import Dashbord from './Components/Dashbord';
 import AdminDashboard from './Components/AdminDashboard';
 import Register from './Components/Register';
+import Sample from './Components/Sample';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/dashboard' element={<Dashbord />} />
           <Route path='/admindashboard' element={<AdminDashboard />} />
+          <Route path='/sapmle' element={<Sample />} />
         </Routes>
       </Router>
     </div>

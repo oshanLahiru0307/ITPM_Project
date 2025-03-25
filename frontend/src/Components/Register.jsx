@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import {useNavigate} from 'react-router-dom'
-import { Flex, Form, Button, Input, Card, Typography, message } from "antd";
+import { Form, Button, Input, Typography, Row, Col, message} from "antd";
 import UserController from "../Services/UserController";
+import backImage1 from "../assets/backimage1.jpg"
+import backImage2 from "../assets/backImage2.jpg"
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Register = () => {
     const navigate = useNavigate()
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false)
 
     const handleRegister = async (values) => {
         try {
+            setLoading(true)
             const response = await UserController.addUser(values)
             console.log(response)
             navigate('/')
@@ -21,37 +25,54 @@ const Register = () => {
     };
 
     return (
-        <div
-            style={{
-                width: "100%",
-                height: "100vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#F0F8FF",
-            }}
-        >
-            <Card
-                hoverable
-                style={{
-                    minHeight: "600px",
-                    width: "900px",
-                    borderRadius: "15px"
-                }}
-            >
-                <Flex justify="space-between" align="center" style={{ height: "100%", paddingb: '10px' }}>
-                    {/* Left Side - Registration Form */}
-                    <Flex
-                        vertical
-                        style={{
-                            width: "50%",
-                            padding: "20px",
-                        }}
-                    >
-                        <Title level={3} style={{ textAlign: "center" }}>
-                            Register
-                        </Title>
-                        <Form
+
+
+<div
+style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    background: `url(${backImage1})`,
+    backgroundSize: "cover",
+}}
+>
+<div
+    style={{
+        width: '1200px',
+        padding: "0",
+        borderRadius: "10px",
+        overflow: "hidden",
+        background: "white",
+    }}
+>
+    <Row style={{ height: "650px" }}>
+        {/* Left Side - Image */}
+        <Col span={12} style={{ background: "#1890ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <img
+                src={backImage2}
+                alt="Register"
+                style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative" }}
+            />
+            <div style={{ color: "white", textAlign: "center", position: "absolute", padding: "20px", bottom: "40%" }}>
+                <Title level={1} style={{ color: "white", textAlign: "center" }}>
+                    Welcome to WebSite
+                </Title>
+                <Title level={5} style={{ color: "white", textAlign: "center" }}>
+                    Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.
+                </Title>
+            </div>
+        </Col>
+
+        {/* Right Side - Form */}
+        <Col span={12} style={{ padding: "10px 20px" }}>
+            <Title level={3} style={{ color: "#1890ff", textAlign: "center" }}>
+                Create an Account
+            </Title>
+            <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 20 }}>
+                Fill in the details to register your account.
+            </Text>
+            <Form
                             form={form}
                             layout="vertical"
                             onFinish={handleRegister}
@@ -111,46 +132,21 @@ const Register = () => {
                                 <Input.Password placeholder="Enter your password" />
                             </Form.Item>
 
-                            <p style={{ textAlign: 'left' }}>
-                        Do you have an account?{' '}
-                        <span 
-                            style={{ color: '#1890ff', cursor: 'pointer' }} 
-                            onClick={() => navigate('/')}
-                        >
-                            Login Now
-                        </span>
-                    </p>
 
-                            <Button type="primary" htmlType="submit" block>
-                                Register
-                            </Button>
-                        </Form>
-                    </Flex>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" loading={loading} block>
+                        Register
+                    </Button>
+                </Form.Item>
 
-                    {/* Right Side - Image */}
-                    <Flex
-                        justify="center"
-                        align="center"
-                        style={{
-                            width: "50%",
-                            height: "100%",
-                            padding: "20px",
-                        }}
-                    >
-                        <img
-                            src="https://images.pexels.com/photos/4195324/pexels-photo-4195324.jpeg?auto=compress&cs=tinysrgb&w=600"
-                            alt="Register"
-                            style={{
-                                width: "90%",
-                                height: "450px",
-                                borderRadius: "10px",
-                                objectFit: "cover",
-                            }}
-                        />
-                    </Flex>
-                </Flex>
-            </Card>
-        </div>
+                <Text type="secondary" style={{ display: "block", textAlign: "center" }}>
+                    Already a member? <a href="/">Sign in</a>
+                </Text>
+            </Form>
+        </Col>
+    </Row>
+</div>
+</div>
     );
 };
 

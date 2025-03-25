@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Form, Button, Input, Card, Typography, message } from "antd";
+import { Form, Button, Input, Typography, message, Row, Col } from "antd";
 import UserController from "../Services/UserController";
 import state from "../State/state";
+import backImage1 from "../assets/backimage1.jpg"
+import backImage2 from "../assets/backImage2.jpg"
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Login = () => {
     const navigate = useNavigate();
@@ -13,7 +15,7 @@ const Login = () => {
 
     const handleLogin = async (values) => {
         setLoading(true);
-        
+
         if (values.email === "admin@gmail.com" && values.password === "admin123") {
             navigate("/admindashboard");
         } else {
@@ -40,40 +42,51 @@ const Login = () => {
     return (
         <div
             style={{
-                width: "100%",
-                height: "100vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "#F0F8FF",
+                width: '100%',
+                height: "100vh",
+                background: `url(${backImage1})`,
+                backgroundSize: "cover",
+                backgroundPosition: 'center'
             }}
         >
-            <Card
-                hoverable
+            <div
                 style={{
-                    width: 400,
-                    height: 350,
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    minHeight: "500px",
-                    width: "900px",
-                    borderRadius: "15px",
-
+                    width: '1000px',
+                    padding: "0",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    background: "white",
                 }}
             >
-                <Flex justify="space-between" align="center" style={{ height: "100%" }}>
-                    {/* Left Side - Login Form */}
-                    <Flex
-                        vertical
-                        style={{
-                            width: "50%",
-                            padding: "20px",
-                        }}
-                    >
-                        <Title level={3} style={{ textAlign: "center" }}>
-                            Login
+                <Row>
+                    {/* Left Side - Image */}
+                    <Col span={12} style={{ background: "#1890ff", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                        <img
+                            src={backImage2}
+                            alt="Login"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                        <div style={{ color: "white", textAlign: "center", position: "absolute", padding: "20px", bottom: "40%" }}>
+                            <Title level={1} style={{ color: "white", textAlign: "center" }}>
+                                Welcome to WebSite
+                            </Title>
+                            <Title level={5} style={{ color: "white", textAlign: "center" }}>
+                                Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.
+                            </Title>
+                        </div>
+                    </Col>
+
+                    {/* Right Side - Form */}
+                    <Col span={12} style={{ padding: "40px" }}>
+                        <Title level={3} style={{ color: "#1890ff", textAlign: "center" }}>
+                            Login Account
                         </Title>
+                        <Text type="secondary" style={{ display: "block", textAlign: "center", marginBottom: 20 }}>
+                            Enter your credentials to access your account.
+                        </Text>
                         <Form
                             form={form}
                             layout="vertical"
@@ -85,7 +98,7 @@ const Login = () => {
                                 name="email"
                                 rules={[{ required: true, message: "Please enter your email!" }]}
                             >
-                                <Input placeholder="Enter your email" />
+                                <Input placeholder="Enter your email" style={{ width: '100%' }} />
                             </Form.Item>
 
                             <Form.Item
@@ -98,8 +111,8 @@ const Login = () => {
 
                             <p style={{ textAlign: 'left' }}>
                                 Don't have an account?{' '}
-                                <span 
-                                    style={{ color: '#1890ff', cursor: 'pointer' }} 
+                                <span
+                                    style={{ color: '#1890ff', cursor: 'pointer' }}
                                     onClick={() => navigate('/register')}
                                 >
                                     Register Now
@@ -109,32 +122,13 @@ const Login = () => {
                             <Button type="primary" htmlType="submit" loading={loading} block>
                                 Login
                             </Button>
+                            <Text type="secondary" style={{ display: "block", textAlign: "center", marginTop: '10px' }}>
+                                Not a member? <a href="/register">Sign up</a>
+                            </Text>
                         </Form>
-                    </Flex>
-
-                    {/* Right Side - Image */}
-                    <Flex
-                        justify="center"
-                        align="center"
-                        style={{
-                            width: "50%",
-                            height: "100%",
-                            padding: "20px",
-                        }}
-                    >
-                        <img
-                            src="https://images.pexels.com/photos/4195324/pexels-photo-4195324.jpeg?auto=compress&cs=tinysrgb&w=600"
-                            alt="Login"
-                            style={{
-                                width: "90%",
-                                height: "400px",
-                                borderRadius: "10px",
-                                objectFit: "cover",
-                            }}
-                        />
-                    </Flex>
-                </Flex>
-            </Card>
+                    </Col>
+                </Row>
+            </div>
         </div>
     );
 };

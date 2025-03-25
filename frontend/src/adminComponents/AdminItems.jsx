@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select, Card } from 'antd';
-import { EditOutlined, DeleteOutlined, GiftOutlined } from '@ant-design/icons'; // Import icons
 import itemController from '../Services/ItemController';
 import categoryController from '../Services/CategoryController';
 import DonationController from '../Services/DonationController';
@@ -13,26 +12,22 @@ import autoTable from 'jspdf-autotable';
 const { Option } = Select;
 const { Search } = Input;
 
-
-const Items = () => {
+const AdminItems = () => {
   const snap = useSnapshot(state);
   const [items, setItems] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [sortedInfo, setSortedInfo] = useState({});
   const [categories, setCategories] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [donateModalVisible, setDonateModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [form] = Form.useForm();
   const [donateForm] = Form.useForm();
-
-
+  const [sortedInfo, setSortedInfo] = useState({});
 
   useEffect(() => {
     fetchItems();
     fetchCategories();
   }, []);
-
 
   const fetchItems = async () => {
     try {
@@ -44,7 +39,6 @@ const Items = () => {
     }
   };
 
-
   const fetchCategories = async () => {
     try {
       const data = await categoryController.getAllCategories();
@@ -54,8 +48,6 @@ const Items = () => {
     }
   };
 
-
-
   const handleAddOrUpdateItem = async (values) => {
     try {
       const formattedValues = {
@@ -64,7 +56,6 @@ const Items = () => {
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
       };
 
-
       if (selectedItem) {
         await itemController.updateItem(selectedItem._id, formattedValues);
         message.success('Item updated successfully');
@@ -72,7 +63,6 @@ const Items = () => {
         await itemController.addItem(formattedValues);
         message.success('Item added successfully');
       }
-
 
       fetchItems();
       setModalVisible(false);
@@ -84,8 +74,6 @@ const Items = () => {
     }
   };
 
-
-
   const handleEditItem = (record) => {
     setSelectedItem(record);
     form.setFieldsValue({
@@ -95,8 +83,6 @@ const Items = () => {
     });
     setModalVisible(true);
   };
-
-
 
   const handleDeleteItem = async (ItemId) => {
     try {
@@ -109,27 +95,25 @@ const Items = () => {
     }
   };
 
-
   const handleDonateItem = (record) => {
     setSelectedItem(record);
     donateForm.setFieldsValue({
-      qty: 1, // Default quantity to 1
+      qty: 1,
     });
     setDonateModalVisible(true);
   };
 
-
-
   const handleDonateSubmit = async (values) => {
     try {
       const donationData = {
-        user: snap.currentUser._id, // Pass current user ID
+        user: snap.currentUser._id,
         ...selectedItem,
         qty: values.qty,
       };
 
       await DonationController.addDonation(donationData);
       message.success('Item donated successfully');
+
       setDonateModalVisible(false);
       donateForm.resetFields();
       fetchItems();
@@ -142,7 +126,7 @@ const Items = () => {
   const handleSearch = (value) => {
     const filtered = items.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
     setFilteredData(filtered);
-  }
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -189,74 +173,52 @@ const Items = () => {
   };
 
   const columns = [
-    {
-      title: 'Name', dataIndex: 'name', key: 'name',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-    },
-    {
-      title: 'Description', dataIndex: 'description', key: 'description',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-    },
-    {
-      title: 'Price', dataIndex: 'price', key: 'price',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-    },
-    {
-      title: 'Category', dataIndex: 'category', key: 'category',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-    },
-    { title: 'Qty', dataIndex: 'qty', key: 'qty',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-     },
+    { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
+    { title: 'Description', dataIndex: 'description', key: 'description', sorter: (a, b) => a.description.localeCompare(b.description) },
+    { title: 'Price', dataIndex: 'price', key: 'price', sorter: (a, b) => a.price - b.price },
+    { title: 'Category', dataIndex: 'category', key: 'category', sorter: (a, b) => a.category.localeCompare(b.category) },
+    { title: 'Qty', dataIndex: 'qty', key: 'qty', sorter: (a, b) => a.qty - b.qty },
     {
       title: 'Manufacturing Date',
       dataIndex: 'mfd',
       key: 'mfd',
-      sorter: (a, b) => moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1,
-      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+      sorter: (a, b) => new Date(a.mfd) - new Date(b.mfd),
+      render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: 'Expiry Date',
       dataIndex: 'expd',
       key: 'expd',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+      sorter: (a, b) => new Date(a.expd) - new Date(b.expd),
+      render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: 'Added Date',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
-      sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
-      render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
+      sorter: (a, b) => new Date(a.expd) - new Date(b.expd),
+      render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <>
-          <Button type="primary" style={{ marginRight: '5px' }} onClick={() => handleEditItem(record)}>
+          <Button type="primary" style={{ marginRight: '10px' }} onClick={() => handleEditItem(record)}>
             Edit
           </Button>
-          <Button type="primary" danger style={{ marginRight: '5px' }} onClick={() => handleDeleteItem(record._id)}>
+          <Button type="primary" danger style={{ marginRight: '10px' }} onClick={() => handleDeleteItem(record._id)}>
             Delete
-          </Button>
-          <Button type="primary" style={{ background: '#5CD85A' }} onClick={() => handleDonateItem(record)}>
-            <GiftOutlined />
           </Button>
         </>
       ),
     },
   ];
 
-
   return (
     <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
-      <Card
-        hoverable
-        style={{ width: '100%', height: '663px' }}
-        title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
-        extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
-      >        <Search
+      <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>Items</h3>}>
+        <Search
           placeholder="Search by Item Name"
           onSearch={handleSearch}
           allowClear
@@ -271,7 +233,14 @@ const Items = () => {
         >
           Generate PDF
         </Button>
-        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          rowKey="_id"
+          pagination={{ pageSize: 8 }}
+          onChange={handleTableChange}
+        />
+
         {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
@@ -318,6 +287,7 @@ const Items = () => {
             </Form.Item>
           </Form>
         </Modal>
+
         {/* Donate Modal */}
         <Modal
           title="Donate Item"
@@ -342,11 +312,6 @@ const Items = () => {
         </Modal>
       </Card>
     </div>
-
   );
-
 }
-
-
-
-export default Items
+  export default AdminItems
