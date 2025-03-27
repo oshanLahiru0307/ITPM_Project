@@ -9,6 +9,7 @@ import state from '../State/state';
 import { useSnapshot } from 'valtio';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from "dayjs";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -189,6 +190,7 @@ const Items = () => {
   const handleTableChange = (pagination, filters, sorter) => {
     setSortedInfo(sorter);
   };
+  
 
   const columns = [
     {
@@ -315,10 +317,22 @@ const Items = () => {
             <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true }]}>
+            <Form.Item name="mfd" label="Manufacture Date" rules={[
+                          { required: true, message: "Manufacturing date is required" },
+                          {
+                            validator: (_, value) =>
+                              value && value.isBefore(dayjs()) ? Promise.resolve() : Promise.reject("Date must be in the past"),
+                          },
+                        ]}>
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name="expd" label="Expire Date" rules={[{ required: true }]}>
+            <Form.Item name="expd" label="Expire Date" rules={[
+                          { required: true, message: "Expiry date is required" },
+                          {
+                            validator: (_, value) =>
+                              value && value.isAfter(dayjs()) ? Promise.resolve() : Promise.reject("Date must be in the future"),
+                          },
+                        ]}>
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
           </Form>
