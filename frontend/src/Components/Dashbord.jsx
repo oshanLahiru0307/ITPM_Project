@@ -101,6 +101,8 @@ const Dashbord = () => {
             onClick={() => { 
               state.currentUser = null
               state.token = null
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
               navigate("/"); }}
             style={{ marginBottom: "15px" }}
           >
