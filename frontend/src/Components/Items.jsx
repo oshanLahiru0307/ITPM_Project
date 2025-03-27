@@ -26,17 +26,17 @@ const Items = () => {
   const [form] = Form.useForm();
   const [donateForm] = Form.useForm();
 
-
+  const user = snap.currentUser._id;
 
   useEffect(() => {
-    fetchItems();
+    fetchItems(user);
     fetchCategories();
-  }, []);
+  }, [user]);
 
 
-  const fetchItems = async () => {
+  const fetchItems = async (user) => {
     try {
-      const data = await itemController.getItems();
+      const data = await itemController.getItemsByUser(user);
       setItems(data);
       setFilteredData(data);
     } catch (error) {

@@ -6,13 +6,17 @@ const {
     getItem,
     addItem,
     updateItem,
-    deelteItem
+    deelteItem,
+    getItemsByUser
 } = require('../controllers/ItemController')
 
 
 
 //get item...
 router.get('/:id', getItem)
+
+//get items by user...
+router.get('/userItems/:user', getItemsByUser)
 
 //get items...
 router.get('/',  getItems)

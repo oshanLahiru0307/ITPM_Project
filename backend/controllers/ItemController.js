@@ -10,6 +10,19 @@ const getItems = async (req,res)=> {
     }
 }
 
+//get items bu user name...
+const getItemsByUser = async(req, res)=> {
+
+    const user = req.params.user
+
+    try{
+        const items = await Items.find({user:user})
+        res.status(200).json(items)
+    }catch(error){
+        res.status(500).json({error:error})
+    }
+}
+
 //get items...
 
 const getItem = async (req,res)=> {
@@ -65,5 +78,6 @@ module.exports = {
     getItem,
     addItem,
     updateItem,
-    deelteItem
+    deelteItem,
+    getItemsByUser
 }
