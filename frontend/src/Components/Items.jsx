@@ -59,6 +59,7 @@ const Items = () => {
   const handleAddOrUpdateItem = async (values) => {
     try {
       const formattedValues = {
+        user: snap.currentUser._id,
         ...values,
         mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
@@ -254,7 +255,7 @@ const Items = () => {
       <Card
         hoverable
         style={{ width: '100%', height: '663px' }}
-        title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
+        title={<h3 style={{ color: '#007FFF' }}>Category</h3>}
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
       >        <Search
           placeholder="Search by Item Name"
@@ -271,7 +272,7 @@ const Items = () => {
         >
           Generate PDF
         </Button>
-        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
+        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }}  onChange={handleTableChange}/>
         {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
@@ -282,10 +283,13 @@ const Items = () => {
             setSelectedItem(null);
           }}
           onOk={() => {
-            form.validateFields().then((values) => {
-              handleAddOrUpdateItem(values);
-              form.resetFields();
-            });
+            form
+            .validateFields()
+            .then((values) => handleAddOrUpdateItem(values))
+            .catch((error)=> {
+              console.error(error, "error while submit")
+              message.error("Fill all the required fields!.")
+            })
           }}
         >
           <Form form={form} layout="vertical">
@@ -328,10 +332,15 @@ const Items = () => {
             setSelectedItem(null);
           }}
           onOk={() => {
-            donateForm.validateFields().then((values) => {
-              handleDonateSubmit(values);
-              donateForm.resetFields();
-            });
+            donateForm
+            .validateFields()
+            .then((values) => {
+              handleDonateSubmit(values)
+            })
+            .catch((error)=>{
+              console.log(error, "error while submit")
+              message.error("Fill all the required fields!.")
+            })
           }}
         >
           <Form form={donateForm} layout="vertical">

@@ -8,6 +8,10 @@ const ItemSchema = new Schema({
         required: true,
         trim: true
     },
+    user:{
+        type:String,
+        required: true
+    },
     description: {
         type: String,
         required: true
