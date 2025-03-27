@@ -48,8 +48,9 @@ const Items = () => {
 
 
   const fetchCategories = async () => {
+    const user = snap.currentUser._id;
     try {
-      const data = await categoryController.getAllCategories();
+      const data = await categoryController.getAllCategoriesByUser(user);
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);

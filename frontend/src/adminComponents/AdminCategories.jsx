@@ -25,12 +25,17 @@ const AdminCategories = () => {
   };
 
   const handleAddCategory = async (values) => {
+    
+    const formatedData = {
+      user: "admin",
+      ...values
+    }
     try {
       if (!selectedItem) {
-        await CategoryController.addCategory(values);
+        await CategoryController.addCategory(formatedData);
         console.log('data added successfuly!');
       } else {
-        await CategoryController.updateCategory(selectedItem._id, values);
+        await CategoryController.updateCategory(selectedItem._id, formatedData);
         console.log('data updated successfuly');
       }
       setModalVisible(false);

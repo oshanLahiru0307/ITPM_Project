@@ -55,7 +55,7 @@ style={{
                 style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative" }}
             />
             <div style={{ color: "white", textAlign: "center", position: "absolute", padding: "20px", bottom: "40%" }}>
-                <Title level={1} style={{ color: "white", textAlign: "center" }}>
+                <Title level={1} style={{ color: "white", textAlign: "center", marginBottom:'30px' }}>
                     Welcome to WebSite
                 </Title>
                 <Title level={5} style={{ color: "white", textAlign: "center" }}>

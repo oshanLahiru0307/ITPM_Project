@@ -11,6 +11,18 @@ const getCategories = async (req, res)=> {
     }
 }
 
+const getCategoriesByUser = async (req, res)=> {
+
+    const user =  req.params.user
+
+    try{
+        const response = await Categories.find({user:user})
+        res.status(200).json(response)
+    }catch(error){
+        res.status(400).json({error: error})
+    }
+}
+
 //get category...
 const getaCategory = async (req,res)=> {
     const {id} = req.params
@@ -25,11 +37,11 @@ const getaCategory = async (req,res)=> {
 
 //addCategory...
 const addCategory = async (req,res)=> {
-    const {name,description} = req.body
+    const {user, name,description} = req.body
     try{
-        const exist = await Categories.findOne({name})
+        const exist = await Categories.findOne({user,name})
         if(!exist){
-            const response = await Categories.create({name,description})
+            const response = await Categories.create({user, name,description})
             res.status(200).json(response)
         }else{
             res.status(400).json({msg:"this category is all ready exist."})
@@ -70,5 +82,6 @@ module.exports = {
     getaCategory,
     addCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategoriesByUser
 }

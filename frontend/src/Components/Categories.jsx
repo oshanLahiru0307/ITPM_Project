@@ -3,10 +3,13 @@ import { Table, Button, message, Form, Modal, Input, Card, Input as AntInput } f
 import CategoryController from '../Services/CategoryController';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import state from '../State/state';
+import { useSnapshot } from 'valtio';
 
 const { Search } = AntInput;
 
 const Categories = () => {
+  const snap = useSnapshot(state);
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -15,8 +18,9 @@ const Categories = () => {
   const [sortedInfo, setSortedInfo] = useState({});
 
   const fetchCategories = async () => {
+    const user = snap.currentUser._id;
     try {
-      const data = await CategoryController.getAllCategories();
+      const data = await CategoryController.getAllCategoriesByUser(user);
       setCategories(data);
       setFilteredData(data); // Initialize filtered data
     } catch (error) {
@@ -25,12 +29,16 @@ const Categories = () => {
   };
 
   const handleAddCategory = async (values) => {
+    const formatedData = {
+      user:snap.currentUser._id,
+      ...values
+    }
     try {
       if (!selectedItem) {
-        await CategoryController.addCategory(values);
+        await CategoryController.addCategory(formatedData);
         console.log('data added successfuly!');
       } else {
-        await CategoryController.updateCategory(selectedItem._id, values);
+        await CategoryController.updateCategory(selectedItem._id, formatedData);
         console.log('data updated successfuly');
       }
       setModalVisible(false);
