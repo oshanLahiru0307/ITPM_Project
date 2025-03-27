@@ -6,7 +6,7 @@ import autoTable from 'jspdf-autotable';
 
 const { Search } = Input;
 
-const UserDetails = () => {
+const AdminUserView = () => {
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -117,7 +117,21 @@ const UserDetails = () => {
     { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
     { title: 'Email', dataIndex: 'email', key: 'email', sorter: (a, b) => a.email.localeCompare(b.email) },
     { title: 'Phone', dataIndex: 'phone', key: 'phone', sorter: (a, b) => a.phone.localeCompare(b.phone) },
-    { title: 'Address', dataIndex: 'address', key: 'address', sorter: (a, b) => a.address.localeCompare(b.address) }
+    { title: 'Address', dataIndex: 'address', key: 'address', sorter: (a, b) => a.address.localeCompare(b.address) },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <span>
+          <Button type="primary" onClick={() => edit(record)} style={{ marginRight: '10px' }}>
+            Edit
+          </Button>
+          <Button type="primary" danger onClick={() => deleteUser(record)}>
+            Delete
+          </Button>
+        </span>
+      ),
+    },
   ];
 
   return (
@@ -161,4 +175,4 @@ const UserDetails = () => {
   );
 };
 
-export default UserDetails;
+export default AdminUserView;

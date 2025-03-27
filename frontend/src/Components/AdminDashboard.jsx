@@ -15,10 +15,10 @@ import { useNavigate } from 'react-router-dom';
 import Home from '../Components/Home'
 import Items from '../Components/Items'
 import AdminCategories from '../adminComponents/AdminCategories'
-import Users from '../Components/UserDetails'
 import AdminDonation from '../adminComponents/AdminAllDonation';
 import Profile from '../Components/Profile'
 import AdminItems from '../adminComponents/AdminItems';
+import AdminUserView from '../adminComponents/AdminUserView';
 
 const { Sider, Content} = Layout;
 const { Title } = Typography;
@@ -115,7 +115,7 @@ const AdminDashbord = () => {
           {snap.activeIndex === 0 && <Home/>}
           {snap.activeIndex === 1 && <AdminItems/>}
           {snap.activeIndex === 2 && <AdminCategories/>}
-          {snap.activeIndex === 3 && <Users/>}
+          {snap.activeIndex === 3 && <AdminUserView/>}
           {snap.activeIndex === 4 && <AdminDonation/>}
           {snap.activeIndex === 5 && <Profile/>}
 
