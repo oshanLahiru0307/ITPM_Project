@@ -26,15 +26,16 @@ const Items = () => {
   const [form] = Form.useForm();
   const [donateForm] = Form.useForm();
 
-  const user = snap.currentUser._id;
+
 
   useEffect(() => {
-    fetchItems(user);
+    fetchItems();
     fetchCategories();
-  }, [user]);
+  }, []);
 
 
-  const fetchItems = async (user) => {
+  const fetchItems = async () => {
+    const user = snap.currentUser._id;
     try {
       const data = await itemController.getItemsByUser(user);
       setItems(data);
@@ -255,7 +256,7 @@ const Items = () => {
       <Card
         hoverable
         style={{ width: '100%', height: '663px' }}
-        title={<h3 style={{ color: '#007FFF' }}>Category</h3>}
+        title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
       >        <Search
           placeholder="Search by Item Name"
