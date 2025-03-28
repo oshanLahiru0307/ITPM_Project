@@ -84,6 +84,10 @@ const Categories = () => {
     setFilteredData(filtered);
   };
 
+  const handleSearchChange = (e) => {
+    handleSearch(e.target.value); // Call handleSearch with the input value
+  };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.text('Category Report', 14, 10);
@@ -149,7 +153,7 @@ const Categories = () => {
 
         <Search
           placeholder="Search by Category Name"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"

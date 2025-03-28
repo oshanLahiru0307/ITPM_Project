@@ -144,9 +144,15 @@ const Items = () => {
   };
 
   const handleSearch = (value) => {
-    const filtered = items.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
+    const filtered = items.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
     setFilteredData(filtered);
-  }
+  };
+
+  const handleSearchChange = (e) => {
+    handleSearch(e.target.value); // Call handleSearch with the input value
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -261,9 +267,10 @@ const Items = () => {
         style={{ width: '100%', height: '663px' }}
         title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
-      >        <Search
+      >        
+      <Search
           placeholder="Search by Item Name"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"

@@ -62,6 +62,10 @@ const MyDonations = ({ refresh }) => {
         setFilteredData(filteredDonations)
     };
 
+    const handleSearchChange = (e) => {
+        handleSearch(e.target.value); // Call handleSearch with the input value
+      };
+
 
     const handleTableChange = (sorter)=> {
         setSortedInfo(sorter)
@@ -180,7 +184,7 @@ const MyDonations = ({ refresh }) => {
         <div>
         <Search
           placeholder="Search by Donation"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"

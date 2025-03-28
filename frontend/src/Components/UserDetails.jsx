@@ -69,13 +69,14 @@ const UserDetails = () => {
     fetchUsers();
   }, []);
 
-  const handleSearch = (value) => {
+  const handleSearchChange = (e) => {
+    const searchValue = e.target.value;
     const filtered = users.filter(
       (user) =>
-        user.name.toLowerCase().includes(value.toLowerCase()) ||
-        user.email.toLowerCase().includes(value.toLowerCase()) ||
-        user.phone.toLowerCase().includes(value.toLowerCase()) ||
-        user.address.toLowerCase().includes(value.toLowerCase())
+        user.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.phone.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.address.toLowerCase().includes(searchValue.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -125,7 +126,7 @@ const UserDetails = () => {
       <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>All Users</h3>}>
         <Search
           placeholder="Search by Name, Email, Phone, or Address"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"
