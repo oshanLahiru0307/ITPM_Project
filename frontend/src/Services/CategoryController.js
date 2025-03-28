@@ -1,12 +1,23 @@
 import axios from 'axios'
 
 const BASE_URI = 'http://localhost:5000/api/category'
+const BASE_URI_2 = 'http://localhost:5000/api/category/userId'
 
 class CategoryController{
 
     static async getAllCategories(){
         try{
             const response = await axios.get(BASE_URI)
+            return response.data
+        }catch(error){
+            console.error("error while fetching categories")
+            throw error
+        }
+    }
+
+    static async getAllCategoriesByUser(user){
+        try{
+            const response = await axios.get(`${BASE_URI_2}/${user}`)
             return response.data
         }catch(error){
             console.error("error while fetching categories")

@@ -6,7 +6,7 @@ import autoTable from 'jspdf-autotable';
 
 const { Search } = Input;
 
-const UserDetails = () => {
+const AdminUserView = () => {
   const [form] = Form.useForm();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -69,14 +69,13 @@ const UserDetails = () => {
     fetchUsers();
   }, []);
 
-  const handleSearchChange = (e) => {
-    const searchValue = e.target.value;
+  const handleSearch = (value) => {
     const filtered = users.filter(
       (user) =>
-        user.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.phone.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.address.toLowerCase().includes(searchValue.toLowerCase())
+        user.name.toLowerCase().includes(value.toLowerCase()) ||
+        user.email.toLowerCase().includes(value.toLowerCase()) ||
+        user.phone.toLowerCase().includes(value.toLowerCase()) ||
+        user.address.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -118,7 +117,21 @@ const UserDetails = () => {
     { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
     { title: 'Email', dataIndex: 'email', key: 'email', sorter: (a, b) => a.email.localeCompare(b.email) },
     { title: 'Phone', dataIndex: 'phone', key: 'phone', sorter: (a, b) => a.phone.localeCompare(b.phone) },
-    { title: 'Address', dataIndex: 'address', key: 'address', sorter: (a, b) => a.address.localeCompare(b.address) }
+    { title: 'Address', dataIndex: 'address', key: 'address', sorter: (a, b) => a.address.localeCompare(b.address) },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <span>
+          <Button type="primary" onClick={() => edit(record)} style={{ marginRight: '10px' }}>
+            Edit
+          </Button>
+          <Button type="primary" danger onClick={() => deleteUser(record)}>
+            Delete
+          </Button>
+        </span>
+      ),
+    },
   ];
 
   return (
@@ -126,7 +139,7 @@ const UserDetails = () => {
       <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>All Users</h3>}>
         <Search
           placeholder="Search by Name, Email, Phone, or Address"
-          onChange={handleSearchChange}
+          onSearch={handleSearch}
           allowClear
           enterButton="Search"
           size="medium"
@@ -162,4 +175,4 @@ const UserDetails = () => {
   );
 };
 
-export default UserDetails;
+export default AdminUserView;

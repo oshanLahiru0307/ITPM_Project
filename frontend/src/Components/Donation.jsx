@@ -33,7 +33,7 @@ const Donation = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
-  const [refresh, setRefresh] = useState(false); // State to trigger refresh
+  const [refresh, setRefresh] = useState(false); 
 
   const onTab1Change = (key) => setActiveTabKey1(key);
 

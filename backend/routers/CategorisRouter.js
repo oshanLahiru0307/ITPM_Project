@@ -5,7 +5,8 @@ const {
     getaCategory,
     addCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategoriesByUser
 } = require('../controllers/CategoriesController')
 
 
@@ -15,6 +16,10 @@ router.get('/:id', getaCategory)
 
 //get Categories...
 router.get('/',  getCategories)
+
+//get Categories by user...
+router.get('/userId/:user', getCategoriesByUser)
+
 
 //add Category...
 router.post('/', addCategory)

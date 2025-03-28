@@ -38,6 +38,10 @@ const AllDonation = () => {
         setFilteredDonations(filtered);
     };
 
+    const handleSearchChange = (e) => {
+        handleSearch(e.target.value); // Call handleSearch with the input value
+      };
+
     const generatePDF = () => {
         const doc = new jsPDF();
         doc.setFontSize(18);
@@ -124,7 +128,7 @@ const AllDonation = () => {
                 allowClear
                 enterButton="Search"
                 size="medium"
-                onSearch={handleSearch}
+                onChange={handleSearchChange}
                 style={{ marginBottom: '20px', width: '20%' }}
             />
             <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 6 }} onChange={handleTableChange}/>

@@ -62,6 +62,10 @@ const MyDonations = ({ refresh }) => {
         setFilteredData(filteredDonations)
     };
 
+    const handleSearchChange = (e) => {
+        handleSearch(e.target.value); // Call handleSearch with the input value
+      };
+
 
     const handleTableChange = (sorter)=> {
         setSortedInfo(sorter)
@@ -130,9 +134,7 @@ const MyDonations = ({ refresh }) => {
             await DonationController.updatedonation(selectedItem._id, updatedData);
             message.success("Donation updated successfully");
 
-            setDonations((prev) =>
-                prev.map((donation) => (donation._id === selectedItem._id ? { ...donation, ...updatedData } : donation))
-            );
+            fetchDonations();
 
             setModalVisible(false);
             form.resetFields();
@@ -148,7 +150,7 @@ const MyDonations = ({ refresh }) => {
             await DonationController.deleteDonation(id);
             message.success("Donation deleted successfully");
 
-            setDonations((prev) => prev.filter(donation => donation._id !== id));
+            fetchDonations();
         } catch (error) {
             console.error("Error deleting donation:", error);
             message.error("Failed to delete donation");
@@ -182,7 +184,7 @@ const MyDonations = ({ refresh }) => {
         <div>
         <Search
           placeholder="Search by Donation"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"

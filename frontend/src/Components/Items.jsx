@@ -9,6 +9,7 @@ import state from '../State/state';
 import { useSnapshot } from 'valtio';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from "dayjs";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -35,8 +36,9 @@ const Items = () => {
 
 
   const fetchItems = async () => {
+    const user = snap.currentUser._id;
     try {
-      const data = await itemController.getItems();
+      const data = await itemController.getItemsByUser(user);
       setItems(data);
       setFilteredData(data);
     } catch (error) {
@@ -46,8 +48,9 @@ const Items = () => {
 
 
   const fetchCategories = async () => {
+    const user = snap.currentUser._id;
     try {
-      const data = await categoryController.getAllCategories();
+      const data = await categoryController.getAllCategoriesByUser(user);
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -59,6 +62,7 @@ const Items = () => {
   const handleAddOrUpdateItem = async (values) => {
     try {
       const formattedValues = {
+        user: snap.currentUser._id,
         ...values,
         mfd: values.mfd ? values.mfd.format('YYYY-MM-DD') : null,
         expd: values.expd ? values.expd.format('YYYY-MM-DD') : null,
@@ -140,9 +144,15 @@ const Items = () => {
   };
 
   const handleSearch = (value) => {
-    const filtered = items.filter((item) => item.name.toLowerCase().includes(value.toLowerCase()));
+    const filtered = items.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
     setFilteredData(filtered);
-  }
+  };
+
+  const handleSearchChange = (e) => {
+    handleSearch(e.target.value); // Call handleSearch with the input value
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -187,6 +197,7 @@ const Items = () => {
   const handleTableChange = (pagination, filters, sorter) => {
     setSortedInfo(sorter);
   };
+  
 
   const columns = [
     {
@@ -256,9 +267,10 @@ const Items = () => {
         style={{ width: '100%', height: '663px' }}
         title={<h3 style={{ color: '#007FFF' }}>Items</h3>}
         extra={<Button type="primary" onClick={() => setModalVisible(true)}>+ Add Item</Button>}
-      >        <Search
+      >        
+      <Search
           placeholder="Search by Item Name"
-          onSearch={handleSearch}
+          onChange={handleSearchChange}
           allowClear
           enterButton="Search"
           size="medium"
@@ -271,7 +283,7 @@ const Items = () => {
         >
           Generate PDF
         </Button>
-        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }} />
+        <Table dataSource={filteredData} columns={columns} rowKey="_id" pagination={{ pageSize: 8 }}  onChange={handleTableChange}/>
         {/* Add/Edit Modal */}
         <Modal
           title={selectedItem ? 'Edit Item' : 'Add Item'}
@@ -282,10 +294,13 @@ const Items = () => {
             setSelectedItem(null);
           }}
           onOk={() => {
-            form.validateFields().then((values) => {
-              handleAddOrUpdateItem(values);
-              form.resetFields();
-            });
+            form
+            .validateFields()
+            .then((values) => handleAddOrUpdateItem(values))
+            .catch((error)=> {
+              console.error(error, "error while submit")
+              message.error("Fill all the required fields!.")
+            })
           }}
         >
           <Form form={form} layout="vertical">
@@ -310,10 +325,22 @@ const Items = () => {
             <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name="mfd" label="Manufacture Date" rules={[{ required: true }]}>
+            <Form.Item name="mfd" label="Manufacture Date" rules={[
+                          { required: true, message: "Manufacturing date is required" },
+                          {
+                            validator: (_, value) =>
+                              value && value.isBefore(dayjs()) ? Promise.resolve() : Promise.reject("Date must be in the past"),
+                          },
+                        ]}>
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name="expd" label="Expire Date" rules={[{ required: true }]}>
+            <Form.Item name="expd" label="Expire Date" rules={[
+                          { required: true, message: "Expiry date is required" },
+                          {
+                            validator: (_, value) =>
+                              value && value.isAfter(dayjs()) ? Promise.resolve() : Promise.reject("Date must be in the future"),
+                          },
+                        ]}>
               <DatePicker style={{ width: '100%' }} />
             </Form.Item>
           </Form>
@@ -328,10 +355,15 @@ const Items = () => {
             setSelectedItem(null);
           }}
           onOk={() => {
-            donateForm.validateFields().then((values) => {
-              handleDonateSubmit(values);
-              donateForm.resetFields();
-            });
+            donateForm
+            .validateFields()
+            .then((values) => {
+              handleDonateSubmit(values)
+            })
+            .catch((error)=>{
+              console.log(error, "error while submit")
+              message.error("Fill all the required fields!.")
+            })
           }}
         >
           <Form form={donateForm} layout="vertical">

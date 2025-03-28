@@ -70,8 +70,8 @@ const Login = () => {
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
                         <div style={{ color: "white", textAlign: "center", position: "absolute", padding: "20px", bottom: "40%" }}>
-                            <Title level={1} style={{ color: "white", textAlign: "center" }}>
-                                Welcome to WebSite
+                            <Title level={1} style={{ color: "white", textAlign: "center", marginBottom:'30px' }}>
+                                Welcome to Home Stock
                             </Title>
                             <Title level={5} style={{ color: "white", textAlign: "center" }}>
                                 Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.
@@ -108,16 +108,6 @@ const Login = () => {
                             >
                                 <Input.Password placeholder="Enter your password" />
                             </Form.Item>
-
-                            <p style={{ textAlign: 'left' }}>
-                                Don't have an account?{' '}
-                                <span
-                                    style={{ color: '#1890ff', cursor: 'pointer' }}
-                                    onClick={() => navigate('/register')}
-                                >
-                                    Register Now
-                                </span>
-                            </p>
 
                             <Button type="primary" htmlType="submit" loading={loading} block>
                                 Login

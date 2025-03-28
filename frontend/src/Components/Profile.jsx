@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Input, Modal, message } from 'antd';
 import UserController from '../Services/UserController';
 import state from '../State/state';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const navigate = useNavigate()
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [satisfactionModalVisible, setSatisfactionModalVisible] = useState(false);
@@ -53,10 +55,11 @@ const Profile = () => {
     try {
       await UserController.deleteUser(user._id);
       message.success('User Deleted Successfully');
-      localStorage.removeItem('user'); // Remove user from local storage
+      localStorage.removeItem('user');
+      localStorage.removeItem('token'); // Remove user from local storage
       setUser(null); // Clear the state
       setDeleteModalVisible(false);
-      window.location.replace('/'); // Redirect after deletion
+      navigate('/'); // Redirect after deletion
     } catch (error) {
       console.error("Error while deleting", error);
       message.error("Failed to delete account");

@@ -10,6 +10,19 @@ const getItems = async (req,res)=> {
     }
 }
 
+//get items bu user name...
+const getItemsByUser = async(req, res)=> {
+
+    const user = req.params.user
+
+    try{
+        const items = await Items.find({user:user})
+        res.status(200).json(items)
+    }catch(error){
+        res.status(500).json({error:error})
+    }
+}
+
 //get items...
 
 const getItem = async (req,res)=> {
@@ -26,8 +39,8 @@ const getItem = async (req,res)=> {
 
 const addItem = async (req,res)=> {
     try{
-        const {name, description, price, category, qty, mfd, expd} = req.body
-        const response = await Items.create({name, description, price, category, qty, mfd, expd})
+        const {name, user, description, price, category, qty, mfd, expd} = req.body
+        const response = await Items.create({name, user, description, price, category, qty, mfd, expd})
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error:error})
@@ -65,5 +78,6 @@ module.exports = {
     getItem,
     addItem,
     updateItem,
-    deelteItem
+    deelteItem,
+    getItemsByUser
 }
