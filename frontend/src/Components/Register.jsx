@@ -56,7 +56,7 @@ style={{
             />
             <div style={{ color: "white", textAlign: "center", position: "absolute", padding: "20px", bottom: "40%" }}>
                 <Title level={1} style={{ color: "white", textAlign: "center", marginBottom:'30px' }}>
-                    Welcome to WebSite
+                    Welcome to Home Stock 
                 </Title>
                 <Title level={5} style={{ color: "white", textAlign: "center" }}>
                     Lorem ipsum is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty spaces in a layout that does not yet have content.
