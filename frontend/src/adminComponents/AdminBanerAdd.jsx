@@ -1,52 +1,85 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Button, Modal, Upload, message } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-} from "@ant-design/icons"; 
+} from "@ant-design/icons";
 import BannerController from "../Services/BannerController.js";
-
-// import BannerController from "../Services/AdminbaneraddController.js";
 
 const { confirm } = Modal;
 
 const AdminBanerAdd = () => {
   const [images, setImages] = useState([]);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleUpload = (file) => {
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
+  const fetchBanners = async () => {
+    try {
+      const data = await BannerController.getBanners(); // corrected from `viewBanners`
+      setImages(data);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      message.error("Failed to load banners");
+    }
+  };
+
+  const handleFileChange = (file) => {
+    setSelectedFile(file);
+
     const reader = new FileReader();
     reader.onload = () => {
-      const base64String = reader.result.split(",")[1];
-      setImages((prevImages) => [...prevImages, `data:image/jpeg;base64,${base64String}`]);
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    return false;
+  };
+
+  const handleImageSubmit = () => {
+    if (!selectedFile) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result; // Include MIME type
       BannerController.addBanner({ image: base64String })
-        .then(() => {
+        .then((res) => {
           message.success("Image uploaded successfully");
+          setImages((prev) => [...prev, res]);
+          setUploadVisible(false);
+          setPreviewImage(null);
+          setSelectedFile(null);
         })
         .catch((error) => {
           console.error("Error uploading image:", error);
           message.error("Failed to upload image");
         });
     };
-    reader.readAsDataURL(file);
-    return false; 
+    reader.readAsDataURL(selectedFile);
   };
 
-  const showDeleteConfirm = (index) => {
+  const showDeleteConfirm = (id) => {
     confirm({
-      title: "Are you sure you want to delete this image?",
+      title: "Are you sure delete this image?",
       icon: <ExclamationCircleOutlined />,
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
       onOk() {
-        setImages((prevImages) => {
-          const updated = [...prevImages];
-          updated.splice(index, 1);
-          return updated;
-        });
-        message.success("Image deleted");
+        BannerController.deleteBanner(id)
+          .then(() => {
+            setImages((prev) => prev.filter((img) => img._id !== id));
+            message.success("Image deleted");
+          })
+          .catch((error) => {
+            console.error("Error deleting banner:", error);
+            message.error("Failed to delete image");
+          });
       },
     });
   };
@@ -63,9 +96,9 @@ const AdminBanerAdd = () => {
         style={{ width: "100%" }}
       >
         <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-          {images.map((img, index) => (
+          {images.map((img) => (
             <div
-              key={index}
+              key={img._id}
               style={{
                 position: "relative",
                 width: "300px",
@@ -77,8 +110,8 @@ const AdminBanerAdd = () => {
               }}
             >
               <img
-                src={img}
-                alt={`uploaded-${index}`}
+                src={img.image} // Now includes full data URI
+                alt="banner"
                 style={{ width: "100%", height: "150px", objectFit: "cover" }}
               />
               <Button
@@ -87,7 +120,7 @@ const AdminBanerAdd = () => {
                 shape="circle"
                 icon={<DeleteOutlined />}
                 size="small"
-                onClick={() => showDeleteConfirm(index)}
+                onClick={() => showDeleteConfirm(img._id)}
                 style={{
                   position: "absolute",
                   top: "10px",
@@ -104,16 +137,30 @@ const AdminBanerAdd = () => {
       <Modal
         title="Upload Image"
         open={uploadVisible}
-        onCancel={() => setUploadVisible(true)}
-        footer={null}
+        onCancel={() => {
+          setUploadVisible(false);
+          setPreviewImage(null);
+          setSelectedFile(null);
+        }}
+        onOk={handleImageSubmit}
+        okText="Add Image"
+        okButtonProps={{ disabled: !selectedFile }}
       >
         <Upload
           accept="image/*"
-          beforeUpload={handleUpload}
-          showUploadList={true}
+          beforeUpload={handleFileChange}
+          showUploadList={false}
         >
-          <Button icon={<PlusOutlined />}>Click to Upload</Button>
+          <Button icon={<PlusOutlined />}>Choose Image</Button>
         </Upload>
+
+        {previewImage && (
+          <img
+            src={previewImage}
+            alt="Preview"
+            style={{ marginTop: "20px", width: "100%", maxHeight: "200px", objectFit: "contain" }}
+          />
+        )}
       </Modal>
     </div>
   );

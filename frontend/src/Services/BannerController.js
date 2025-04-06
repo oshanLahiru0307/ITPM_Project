@@ -13,6 +13,26 @@ class BannerController {
         }
     }
 
+    static async getBanners() {
+        try {
+          const response = await axios.get(BASE_URI);
+          return response.data;
+        } catch (error) {
+          console.error('Error while fetching banners:', error);
+          throw error;
+        }
+      }
+    
+      static async deleteBanner(id) {
+        try {
+          const response = await axios.delete(`${BASE_URI}/${id}`);
+          return response.data;
+        } catch (error) {
+          console.error('Error while deleting banner:', error);
+          throw error;
+        }
+      }
+
 }
 
 export default  BannerController
