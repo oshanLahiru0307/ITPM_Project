@@ -13,8 +13,8 @@ const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 const ItemRouter = require('./routers/ItemRoutes')
 const donation = require('./routers/DonationROuter')
-const AdminbanneraddRoutes = require('./routes/AdminbanneraddRoutes');
-
+// const AdminbanneraddRoutes = require('./routers/AdminbanneraddRoutes.js');
+const AdminbanneraddRouter = require('./routers/AdminbaneraddRouter.js')
 
 //midlewere...
 app.use(cors())
@@ -28,7 +28,7 @@ app.use('/api/user', UserRoutes )
 app.use('/api/category', CategoriesRouter )
 app.use('/api/item', ItemRouter )
 app.use('/api/donation', donation )
-app.use('/api/AdminbanneraddRoutes', AdminbanneraddRoutes);
+app.use('/api/AdminbanneraddRoutes', AdminbanneraddRouter);
 
 
 mongoose.connect(process.env.MONGO_URI)

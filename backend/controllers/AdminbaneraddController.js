@@ -12,9 +12,9 @@ const getBanners = async (req, res) => {
 
 // Add a new banner
 const addBanner = async (req, res) => {
-  const { image, title, description } = req.body;
+  const { image} = req.body;
   try {
-    const banner = await AdminBanner.create({ image, title, description });
+    const banner = await AdminBanner.create({ image});
     res.status(200).json(banner);
   } catch (error) {
     res.status(400).json({ error: error.message });

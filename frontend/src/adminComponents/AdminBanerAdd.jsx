@@ -4,7 +4,10 @@ import {
   PlusOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-} from "@ant-design/icons";
+} from "@ant-design/icons"; 
+import BannerController from "../Services/BannerController.js";
+
+// import BannerController from "../Services/AdminbaneraddController.js";
 
 const { confirm } = Modal;
 
@@ -15,12 +18,19 @@ const AdminBanerAdd = () => {
   const handleUpload = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
-      setImages((prevImages) => [...prevImages, reader.result]);
-      setUploadVisible(false);
-      message.success("Image added successfully!");
+      const base64String = reader.result.split(",")[1];
+      setImages((prevImages) => [...prevImages, `data:image/jpeg;base64,${base64String}`]);
+      BannerController.addBanner({ image: base64String })
+        .then(() => {
+          message.success("Image uploaded successfully");
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+          message.error("Failed to upload image");
+        });
     };
     reader.readAsDataURL(file);
-    return false; // Prevent default upload behavior
+    return false; 
   };
 
   const showDeleteConfirm = (index) => {
@@ -94,13 +104,13 @@ const AdminBanerAdd = () => {
       <Modal
         title="Upload Image"
         open={uploadVisible}
-        onCancel={() => setUploadVisible(false)}
+        onCancel={() => setUploadVisible(true)}
         footer={null}
       >
         <Upload
           accept="image/*"
           beforeUpload={handleUpload}
-          showUploadList={false}
+          showUploadList={true}
         >
           <Button icon={<PlusOutlined />}>Click to Upload</Button>
         </Upload>

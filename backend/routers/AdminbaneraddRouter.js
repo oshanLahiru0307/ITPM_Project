@@ -3,7 +3,7 @@ const {
   getBanners,
   addBanner,
   deleteBanner,
-} = require('../controllers/AdminbanneraddController');
+} = require('../controllers/AdminbaneraddController.js');
 
 const router = express.Router();
 
