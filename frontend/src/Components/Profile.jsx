@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Form, Input, Modal, message } from "antd";
+import {
+  Card,
+  Button,
+  Form,
+  Input,
+  Modal,
+  message,
+  Spin,
+} from "antd";
 import UserController from "../Services/UserController";
 import state from "../State/state";
 import { useNavigate } from "react-router-dom";
@@ -8,19 +16,23 @@ const Profile = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [satisfactionModalVisible, setSatisfactionModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const defaultProfilePic =
     "https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png";
 
   useEffect(() => {
-    const storedUser =
-      JSON.parse(localStorage.getItem("user")) || state.currentUser;
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    setTimeout(() => {
+      const storedUser =
+        JSON.parse(localStorage.getItem("user")) || state.currentUser;
+      if (storedUser) setUser(storedUser);
+      setLoading(false);
+    }, 1000); // Simulate a load delay
   }, []);
 
   const handleEdit = () => {
@@ -32,6 +44,7 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+      setSaving(true);
       const updatedUser = {
         ...user,
         ...values,
@@ -46,6 +59,8 @@ const Profile = () => {
     } catch (error) {
       console.error("Error updating profile", error);
       message.error("Failed to update profile");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -60,21 +75,32 @@ const Profile = () => {
 
   const deleteUser = async () => {
     try {
+      setDeleting(true);
       await UserController.deleteUser(user._id);
-      message.success("User Deleted Successfully");
       localStorage.removeItem("user");
-      localStorage.removeItem("token"); // Remove user from local storage
-      setUser(null); // Clear the state
+      localStorage.removeItem("token");
+      state.currentUser = null;
+      message.success("Account deleted successfully!");
       setDeleteModalVisible(false);
-      navigate("/"); // Redirect after deletion
+      navigate("/");
     } catch (error) {
       console.error("Error while deleting", error);
       message.error("Failed to delete account");
+    } finally {
+      setDeleting(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", paddingTop: "100px" }}>
+        <Spin size="large" tip="Loading Profile..." />
+      </div>
+    );
+  }
+
   if (!user) {
-    return <p>Loading user data...</p>;
+    return <p>No user found.</p>;
   }
 
   return (
@@ -147,11 +173,9 @@ const Profile = () => {
               <h3>About Us:</h3>
               <hr />
               <p>
-                Welcome to our platform! We are committed to providing you with
-                seamless experiences for your holiday and travel needs. Our
-                mission is to connect users with the best destinations, offering
-                personalized support and user-friendly features to make your
-                journey unforgettable.
+                Welcome to our platform! We connect users with top travel
+                destinations and provide personalized support for unforgettable
+                journeys.
               </p>
             </div>
 
@@ -203,13 +227,14 @@ const Profile = () => {
         open={editModalVisible}
         onCancel={() => setEditModalVisible(false)}
         onOk={handleSave}
+        confirmLoading={saving}
       >
         <Form form={form} layout="vertical">
           <Form.Item label="Profile Picture">
             <input type="file" accept="image/*" onChange={handleImageChange} />
             {previewImage && (
               <img
-                src={previewImage || defaultProfilePic}
+                src={previewImage}
                 alt="Preview"
                 style={{
                   width: "80px",
@@ -265,18 +290,11 @@ const Profile = () => {
         title="Confirm Delete"
         open={deleteModalVisible}
         onCancel={() => setDeleteModalVisible(false)}
-        // onOk={deleteUser}
-
-        onOk={() => {
-          deleteUser("user");
-          state.currentUser = null;
-          message.success("Account deleted successfully!");
-          setDeleteModalVisible(false);
-          window.location.replace("/");
-        }}
+        onOk={deleteUser}
         okText="Delete"
         okType="danger"
         cancelText="Cancel"
+        confirmLoading={deleting}
       >
         <p>Are you sure you want to delete your account?</p>
       </Modal>
