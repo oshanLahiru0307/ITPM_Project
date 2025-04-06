@@ -8,8 +8,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [satisfactionModalVisible, setSatisfactionModalVisible] =
-    useState(false);
+  const [satisfactionModalVisible, setSatisfactionModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [user, setUser] = useState(null);

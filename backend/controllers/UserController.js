@@ -14,7 +14,6 @@ const getUser = async (req,res)=> {
         res.status(400).json({error: error})
     }
 }
-// 12345
 
 //get users...
 const getUsers = async (req,res)=> {
@@ -44,23 +43,6 @@ const addUser = async (req,res)=> {
         res.status(400).json({error: error})
     }
 }
-
-
-// const addUser = async (req, res) => {
-//     const { name, email, password, phone, address, picture } = req.body;
-//     try {
-//         const existingUser = await UserSchema.findOne({ email });
-//         if (existingUser) return res.status(409).json({ error: "Email already exists." });
-
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         const newUser = await UserSchema.create({ name, email, password: hashedPassword, phone, address, picture });
-
-//         res.status(201).json(newUser);
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to register user." });
-//     }
-// };
-
 
 //update user...
 const updateUser = async (req,res)=> {

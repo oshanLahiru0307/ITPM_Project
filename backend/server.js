@@ -13,7 +13,7 @@ const UserRoutes = require('./routers/UserRoutes')
 const CategoriesRouter = require('./routers/CategorisRouter')
 const ItemRouter = require('./routers/ItemRoutes')
 const donation = require('./routers/DonationROuter')
-
+const AdminbanneraddRoutes = require('./routes/AdminbanneraddRoutes');
 
 
 //midlewere...
@@ -28,6 +28,7 @@ app.use('/api/user', UserRoutes )
 app.use('/api/category', CategoriesRouter )
 app.use('/api/item', ItemRouter )
 app.use('/api/donation', donation )
+app.use('/api/AdminbanneraddRoutes', AdminbanneraddRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI)
