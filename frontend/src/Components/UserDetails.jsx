@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import UserController from "../Services/UserController";
-import { Button, Form, message, Modal, Table, Input, Card, Row, Col, Spin } from 'antd';
+import {
+  Button,
+  Form,
+  message,
+  Modal,
+  Table,
+  Input,
+  Card,
+  Row,
+  Col,
+  Spin,
+} from "antd";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -16,7 +27,6 @@ const UserDetails = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,13 +46,12 @@ const UserDetails = () => {
       setUsers(data);
       setFilteredData(data);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      message.error('Failed to load data.');
+      console.error("Error fetching data:", error);
+      message.error("Failed to load data.");
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleaddUser = async (values) => {
     try {
@@ -192,7 +201,7 @@ const UserDetails = () => {
               style={{
                 float: isMobile || isTablet ? "none" : "right",
                 width: isMobile || isTablet ? "100%" : "auto",
-                marginBottom: 20
+                marginBottom: 20,
               }}
             >
               Generate PDF
@@ -200,15 +209,15 @@ const UserDetails = () => {
           </Col>
         </Row>
         <Spin spinning={loading} tip="Loading Users...">
-        <Table
-          dataSource={filteredData}
-          columns={columns}
-          rowKey="_id"
-          pagination={{ pageSize: 6 }}
-          onChange={handleTableChange}
-          scroll={{ x: "max-content" }}
-        />
-</Spin>
+          <Table
+            dataSource={filteredData}
+            columns={columns}
+            rowKey="_id"
+            pagination={{ pageSize: 6 }}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
+        </Spin>
         <Modal
           title={selectedItem ? "Edit User" : "Add User"}
           open={modalVisible}
