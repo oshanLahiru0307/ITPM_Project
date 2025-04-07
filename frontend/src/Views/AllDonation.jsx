@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Input } from 'antd';
+import { Table, Button, Input, Spin, Row, Col } from 'antd';
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
 import moment from 'moment';
@@ -12,14 +12,31 @@ const AllDonation = () => {
     const [filteredDonations, setFilteredDonations] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [sortedInfo, setSortedInfo] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isTablet, setIsTablet] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsMobile(width <= 576);
+            setIsTablet(width > 576 && width <= 992);
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const fetchDonation = async () => {
+        setLoading(true);
         try {
             const data = await DonationController.getDonation();
             setDonation(data);
-            setFilteredDonations(data); // Initialize filtered data
+            setFilteredDonations(data);
         } catch (error) {
             console.error('Failed to fetch donations', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -33,21 +50,20 @@ const AllDonation = () => {
             item.name.toLowerCase().includes(value.toLowerCase()) ||
             item.description.toLowerCase().includes(value.toLowerCase()) ||
             item.category.toLowerCase().includes(value.toLowerCase()) ||
-            item.userName.toLowerCase().includes(value.toLowerCase()) // Include owner in search
+            item.userName.toLowerCase().includes(value.toLowerCase())
         );
         setFilteredDonations(filtered);
     };
 
     const handleSearchChange = (e) => {
-        handleSearch(e.target.value); // Call handleSearch with the input value
-      };
+        handleSearch(e.target.value);
+    };
 
     const generatePDF = () => {
         const doc = new jsPDF();
         doc.setFontSize(18);
         doc.text('All Donations List', 14, 16);
 
-        // Sort data for PDF
         const sortedData = [...filteredDonations].sort((a, b) => {
             if (!sortedInfo.field) return 0;
             let sortOrder = sortedInfo.order === 'ascend' ? 1 : -1;
@@ -108,7 +124,7 @@ const AllDonation = () => {
           title: 'Added Date', 
           dataIndex: 'updatedAt', 
           key: 'updatedAt', 
-          sorter: (a, b) => moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1,
+          sorter: (a, b) => moment(a.updatedAt).isBefore(moment(b.updatedAt)) ? -1 : 1,
           render: (text) => text ? moment(text).format('YYYY-MM-DD') : ''
         },
         { title: 'Owner', dataIndex: 'userName', key: 'userName', sorter: (a, b) => a.userName.localeCompare(b.userName) },
@@ -119,19 +135,44 @@ const AllDonation = () => {
     };
 
     return (
-        <div>
-            <Button type="primary" onClick={generatePDF} style={{ float: 'right', marginBottom: '20px' }}>
-                Generate PDF
-            </Button>
-            <Search
-                placeholder="Search Donations"
-                allowClear
-                enterButton="Search"
-                size="medium"
-                onChange={handleSearchChange}
-                style={{ marginBottom: '20px', width: '20%' }}
-            />
-            <Table dataSource={filteredDonations} columns={columns} rowKey="_id" pagination={{ pageSize: 6 }} onChange={handleTableChange}/>
+        <div style={{ padding: '20px', minHeight: '100vh' }}>
+            <Row justify="space-between" align="middle" gutter={[16, 16]}>
+                <Col xs={24} sm={24} md={12} lg={8}>
+                    <Search
+                        placeholder="Search Donations"
+                        allowClear
+                        enterButton="Search"
+                        size="medium"
+                        onChange={handleSearchChange}
+                        style={{ width: '100%', marginBottom: 20 }}
+                    />
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={4}>
+                    <Button 
+                        type="primary" 
+                        onClick={generatePDF} 
+                        block={isMobile || isTablet}
+                        style={{
+                            float: isMobile || isTablet ? 'none' : 'right',
+                            width: isMobile || isTablet ? '100%' : 'auto',
+                            marginBottom: 20
+                        }}
+                    >
+                        Generate PDF
+                    </Button>
+                </Col>
+            </Row>
+
+            <Spin spinning={loading} tip="Loading donations...">
+                <Table 
+                    dataSource={filteredDonations} 
+                    columns={columns} 
+                    rowKey="_id" 
+                    pagination={{ pageSize: 6 }} 
+                    onChange={handleTableChange} 
+                    scroll={{ x: 'max-content' }}
+                />
+            </Spin>
         </div>
     );
 };

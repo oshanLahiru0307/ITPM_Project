@@ -91,15 +91,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", paddingTop: "100px" }}>
-        <Spin size="large" tip="Loading Profile..." />
-      </div>
-    );
-  }
-
-  if (!user) {
+  if (!user && !loading) {
     return <p>No user found.</p>;
   }
 
@@ -116,109 +108,115 @@ const Profile = () => {
         style={{ width: "100%", minHeight: "663px" }}
         title={<h3 style={{ color: "#007FFF" }}>User Profile</h3>}
       >
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "10px",
-            overflow: "hidden",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#2b6cb0",
-              height: "120px",
-              position: "relative",
-              padding: "20px",
-            }}
-          >
-            <h1
-              style={{
-                color: "#fff",
-                fontSize: "30px",
-                fontWeight: "bold",
-                marginTop: "40px",
-                marginLeft: "170px",
-              }}
-            >
-              {user.name}
-            </h1>
-            <img
-              src={user.picture || defaultProfilePic}
-              alt="User"
-              style={{
-                width: "130px",
-                height: "130px",
-                borderRadius: "50%",
-                border: "5px solid #fff",
-                position: "absolute",
-                top: "20px",
-                left: "30px",
-                objectFit: "cover",
-                backgroundColor: "#fff",
-              }}
-            />
-          </div>
-
-          <div style={{ display: "flex", padding: "30px" }}>
+        <Spin spinning={loading} tip="Loading Profile...">
+          {!loading && (
             <div
               style={{
-                width: "25%",
-                backgroundColor: "#eee",
-                padding: "20px",
+                background: "#fff",
                 borderRadius: "10px",
-                marginRight: "30px",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
             >
-              <h3>About Us:</h3>
-              <hr />
-              <p>
-                Welcome to our platform! We connect users with top travel
-                destinations and provide personalized support for unforgettable
-                journeys.
-              </p>
-            </div>
-
-            <div
-              style={{
-                flex: 1,
-                border: "1px solid #ccc",
-                padding: "20px",
-                borderRadius: "10px",
-              }}
-            >
-              <p>
-                <strong>User Name:</strong> {user.name}
-              </p>
-              <hr />
-              <p>
-                <strong>Email Address:</strong> {user.email}
-              </p>
-              <hr />
-              <p>
-                <strong>Mobile Number:</strong> {user.phone || "Add number"}
-              </p>
-              <hr />
-              <p>
-                <strong>Address:</strong> {user.address || "Add address"}
-              </p>
-              <hr />
-
-              <div style={{ marginTop: "30px", display: "flex", gap: "20px" }}>
-                <Button type="primary" onClick={handleEdit}>
-                  Edit Profile
-                </Button>
-                <Button
-                  type="primary"
-                  danger
-                  onClick={() => setDeleteModalVisible(true)}
+              <div
+                style={{
+                  backgroundColor: "#2b6cb0",
+                  height: "120px",
+                  position: "relative",
+                  padding: "20px",
+                }}
+              >
+                <h1
+                  style={{
+                    color: "#fff",
+                    fontSize: "30px",
+                    fontWeight: "bold",
+                    marginTop: "40px",
+                    marginLeft: "170px",
+                  }}
                 >
-                  Delete Account
-                </Button>
+                  {user.name}
+                </h1>
+                <img
+                  src={user.picture || defaultProfilePic}
+                  alt="User"
+                  style={{
+                    width: "130px",
+                    height: "130px",
+                    borderRadius: "50%",
+                    border: "5px solid #fff",
+                    position: "absolute",
+                    top: "20px",
+                    left: "30px",
+                    objectFit: "cover",
+                    backgroundColor: "#fff",
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", padding: "30px" }}>
+                <div
+                  style={{
+                    width: "25%",
+                    backgroundColor: "#eee",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    marginRight: "30px",
+                  }}
+                >
+                  <h3>About Us:</h3>
+                  <hr />
+                  <p>
+                    Welcome to our platform! We connect users with top travel
+                    destinations and provide personalized support for
+                    unforgettable journeys.
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    flex: 1,
+                    border: "1px solid #ccc",
+                    padding: "20px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <p>
+                    <strong>User Name:</strong> {user.name}
+                  </p>
+                  <hr />
+                  <p>
+                    <strong>Email Address:</strong> {user.email}
+                  </p>
+                  <hr />
+                  <p>
+                    <strong>Mobile Number:</strong> {user.phone || "Add number"}
+                  </p>
+                  <hr />
+                  <p>
+                    <strong>Address:</strong> {user.address || "Add address"}
+                  </p>
+                  <hr />
+
+                  <div
+                    style={{ marginTop: "30px", display: "flex", gap: "20px" }}
+                  >
+                    <Button type="primary" onClick={handleEdit}>
+                      Edit Profile
+                    </Button>
+                    <Button
+                      type="primary"
+                      danger
+                      onClick={() => setDeleteModalVisible(true)}
+                    >
+                      Delete Account
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          )}
+        </Spin>
       </Card>
 
       {/* Edit Profile Modal */}
