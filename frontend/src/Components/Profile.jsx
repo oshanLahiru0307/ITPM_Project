@@ -32,7 +32,7 @@ const Profile = () => {
         JSON.parse(localStorage.getItem("user")) || state.currentUser;
       if (storedUser) setUser(storedUser);
       setLoading(false);
-    }, 1000); // Simulate a load delay
+    }, 1000);
   }, []);
 
   const handleEdit = () => {
@@ -154,14 +154,21 @@ const Profile = () => {
                 />
               </div>
 
-              <div style={{ display: "flex", padding: "30px" }}>
+              {/* Responsive Content */}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  padding: "30px",
+                  gap: "20px",
+                }}
+              >
                 <div
                   style={{
-                    width: "25%",
+                    flex: "1 1 300px",
                     backgroundColor: "#eee",
                     padding: "20px",
                     borderRadius: "10px",
-                    marginRight: "30px",
                   }}
                 >
                   <h3>About Us:</h3>
@@ -175,7 +182,7 @@ const Profile = () => {
 
                 <div
                   style={{
-                    flex: 1,
+                    flex: "2 1 400px",
                     border: "1px solid #ccc",
                     padding: "20px",
                     borderRadius: "10px",
@@ -190,7 +197,8 @@ const Profile = () => {
                   </p>
                   <hr />
                   <p>
-                    <strong>Mobile Number:</strong> {user.phone || "Add number"}
+                    <strong>Mobile Number:</strong>{" "}
+                    {user.phone || "Add number"}
                   </p>
                   <hr />
                   <p>
@@ -199,7 +207,12 @@ const Profile = () => {
                   <hr />
 
                   <div
-                    style={{ marginTop: "30px", display: "flex", gap: "20px" }}
+                    style={{
+                      marginTop: "30px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "10px",
+                    }}
                   >
                     <Button type="primary" onClick={handleEdit}>
                       Edit Profile

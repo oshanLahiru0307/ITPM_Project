@@ -135,7 +135,7 @@ const AllDonation = () => {
     };
 
     return (
-        <div style={{ padding: '20px', minHeight: '100vh' }}>
+        <div >
             <Row justify="space-between" align="middle" gutter={[16, 16]}>
                 <Col xs={24} sm={24} md={12} lg={8}>
                     <Search
