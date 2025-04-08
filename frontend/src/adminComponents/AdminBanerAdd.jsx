@@ -15,9 +15,9 @@ const AdminBanerAdd = () => {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [loading, setLoading] = useState(true); // for initial load
-  const [adding, setAdding] = useState(false); // when adding
-  const [deletingId, setDeletingId] = useState(null); // for deleting
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -99,17 +99,28 @@ const AdminBanerAdd = () => {
   };
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#F0F8FF", minHeight: "100vh" }}>
-      <Spin spinning={loading} tip="Loading Banners...">
-        <Card
-          title="Manage Banners"
-          extra={
-            <Button type="primary" onClick={() => setUploadVisible(true)}>
-              <PlusOutlined /> Add Image
-            </Button>
-          }
-          style={{ width: "100%" }}
-        >
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#F0F8FF",
+        minHeight: "100vh",
+      }}
+    >
+      <Card
+        hoverable
+        style={{ width: "100%", minHeight: "663px"}}
+        title={
+          <h3 style={{ color: "#007FFF", textAlign: "middle" }}>
+            Manage Banners
+          </h3>
+        }
+        extra={
+          <Button type="primary" onClick={() => setUploadVisible(true)}>
+            <PlusOutlined /> Add Image
+          </Button>
+        }
+      >
+        <Spin spinning={loading} tip="Loading Banners...">
           <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
             {images.map((img) => (
               <div
@@ -127,12 +138,17 @@ const AdminBanerAdd = () => {
                 <img
                   src={img.image}
                   alt="banner"
-                  style={{ width: "100%", height: "150px", objectFit: "cover" }}
+                  style={{ width: "100%", height: "150px", objectFit: "cover", marginBottom:"-5px"}}
                 />
 
                 {deletingId === img._id ? (
                   <Spin
-                    indicator={<LoadingOutlined style={{ fontSize: 20, color: "#ff4d4f" }} spin />}
+                    indicator={
+                      <LoadingOutlined
+                        style={{ fontSize: 20, color: "#ff4d4f" }}
+                        spin
+                      />
+                    }
                     style={{
                       position: "absolute",
                       top: "10px",
@@ -159,8 +175,8 @@ const AdminBanerAdd = () => {
               </div>
             ))}
           </div>
-        </Card>
-      </Spin>
+        </Spin>
+      </Card>
 
       <Modal
         title="Upload Image"

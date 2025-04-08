@@ -8,6 +8,7 @@ import {
   HeartOutlined,
   LogoutOutlined,
   ProfileOutlined,
+  AppstoreAddOutlined
 } from '@ant-design/icons';
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
@@ -19,6 +20,7 @@ import AdminDonation from '../adminComponents/AdminAllDonation';
 import Profile from '../Components/Profile'
 import AdminItems from '../adminComponents/AdminItems';
 import AdminUserView from '../adminComponents/AdminUserView';
+import AdminBanerAdd from '../adminComponents/AdminBanerAdd';
 
 const { Sider, Content} = Layout;
 const { Title } = Typography;
@@ -98,6 +100,14 @@ const AdminDashbord = () => {
           </Menu.Item>
           <Menu.Item
             key="6"
+            icon={<AppstoreAddOutlined />}
+            onClick={() => { state.activeIndex = 6; }}
+            style={{ marginBottom: "15px" }}
+          >
+            Add Banner
+          </Menu.Item>
+          <Menu.Item
+            key="7"
             icon={<LogoutOutlined />}
             onClick={() => { 
               state.currentUser = null
@@ -121,6 +131,7 @@ const AdminDashbord = () => {
           {snap.activeIndex === 3 && <AdminUserView/>}
           {snap.activeIndex === 4 && <AdminDonation/>}
           {snap.activeIndex === 5 && <Profile/>}
+          {snap.activeIndex === 6 && <AdminBanerAdd/>}
 
         </Content>
       </Layout>

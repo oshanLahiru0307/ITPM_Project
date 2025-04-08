@@ -14,18 +14,17 @@ const AdminDonation = () => {
   const [isTablet, setIsTablet] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-      const handleResize = () => {
-        const width = window.innerWidth;
-        setIsMobile(width <= 576);
-        setIsTablet(width > 576 && width <= 992);
-      };
-      handleResize();
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-    
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 576);
+      setIsTablet(width > 576 && width <= 992);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const fetchDonation = async () => {
     setLoading(true);
     try {
@@ -55,7 +54,16 @@ const AdminDonation = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.text("Donation Report", 14, 10);
-    const columns = ["#", "Name", "Description", "Category", "Qty", "Mfg Date", "Exp Date", "Owner"];
+    const columns = [
+      "#",
+      "Name",
+      "Description",
+      "Category",
+      "Qty",
+      "Mfg Date",
+      "Exp Date",
+      "Owner",
+    ];
 
     const sortedData = [...filteredData].sort((a, b) => {
       if (!sortedInfo.field) return 0;
@@ -97,10 +105,30 @@ const AdminDonation = () => {
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name", sorter: (a, b) => a.name.localeCompare(b.name) },
-    { title: "Description", dataIndex: "description", key: "description", sorter: (a, b) => a.description.localeCompare(b.description) },
-    { title: "Category", dataIndex: "category", key: "category", sorter: (a, b) => a.category.localeCompare(b.category) },
-    { title: "Qty", dataIndex: "qty", key: "qty", sorter: (a, b) => a.qty - b.qty },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      sorter: (a, b) => a.description.localeCompare(b.description),
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      sorter: (a, b) => a.category.localeCompare(b.category),
+    },
+    {
+      title: "Qty",
+      dataIndex: "qty",
+      key: "qty",
+      sorter: (a, b) => a.qty - b.qty,
+    },
     {
       title: "M.F.D Date",
       dataIndex: "mfd",
@@ -122,17 +150,30 @@ const AdminDonation = () => {
       sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
       render: (text) => new Date(text).toLocaleDateString(),
     },
-    { title: "Owner", dataIndex: "userName", key: "userName", sorter: (a, b) => a.userName.localeCompare(b.userName) },
+    {
+      title: "Owner",
+      dataIndex: "userName",
+      key: "userName",
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
+    },
   ];
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#F0F8FF", minHeight: "100vh" }}>
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#F0F8FF",
+        minHeight: "100vh",
+      }}
+    >
       <Card
         hoverable
-        style={{ width: "100%" }}
-        title={<h3 style={{ color: "#007FFF", textAlign: "middle" }}>Donations</h3>}
+        style={{ width: "100%", minHeight: "663px" }}
+        title={
+          <h3 style={{ color: "#007FFF", textAlign: "middle" }}>Donations</h3>
+        }
       >
-        <Row justify="space-between" align="middle" gutter={[16, 16]} >
+        <Row justify="space-between" align="middle" gutter={[16, 16]}>
           <Col xs={24} sm={16} md={12} lg={8}>
             <Search
               placeholder="Search by Item Name or Owner"
@@ -144,12 +185,14 @@ const AdminDonation = () => {
             />
           </Col>
           <Col xs={24} sm={24} md={12} lg={4}>
-            <Button type="primary" onClick={generatePDF} 
-            block={isMobile || isTablet}
-            style={{
-              float: isMobile || isTablet ? "none" : "right",
-              width: isMobile || isTablet ? "100%" : "auto",
-            }}
+            <Button
+              type="primary"
+              onClick={generatePDF}
+              block={isMobile || isTablet}
+              style={{
+                float: isMobile || isTablet ? "none" : "right",
+                width: isMobile || isTablet ? "100%" : "auto",
+              }}
             >
               Generate PDF
             </Button>
