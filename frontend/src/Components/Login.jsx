@@ -27,17 +27,19 @@ const Login = () => {
     setLoading(true);
 
     if (values.email === "admin@gmail.com" && values.password === "admin123") {
-      navigate("/admindashboard");
+        state.activeIndex = 0;
+        navigate("/admindashboard");
     } else {
       try {
         const response = await UserController.loginUser(values);
         if (response) {
-          navigate("/dashboard");
-          state.currentUser = response.user;
-          state.token = response.token;
-          localStorage.setItem("user", JSON.stringify(state.currentUser));
-          localStorage.setItem("token", state.token);
-        } else {
+            state.currentUser = response.user;
+            state.token = response.token;
+            state.activeIndex = 0;
+            localStorage.setItem("user", JSON.stringify(state.currentUser));
+            localStorage.setItem("token", state.token);
+            navigate("/dashboard");
+          } else {
           message.error("Invalid username or password");
         }
       } catch (error) {
