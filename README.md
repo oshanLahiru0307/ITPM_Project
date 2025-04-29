@@ -61,11 +61,36 @@ A modern full-stack web application for efficiently managing household items, ca
 
 > 📌 *(Insert screenshots or link to the `/screenshots/` directory if hosted on GitHub)*
 
+- Login Page  
+
+![Login Screenshot](./Images/Issues%20-%20ITPM_Project%20in%20Oshan%20Lahiru%20SonarQube%20Cloud%20-%20Google%20Chrome%204_29_2025%205_54_41%20PM.png)
+
+- Registering Page 
+
+![Registering Screenshot](./Images//Issues%20-%20ITPM_Project%20in%20Oshan%20Lahiru%20SonarQube%20Cloud%20-%20Google%20Chrome%204_29_2025%205_54_49%20PM.png)
+
 - Item Management Table  
+
+![Item Management Table](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_24%20PM.png)
+
 - Add/Edit Item Modal with Validation  
-- Donation Submission & View Panel  
-- Digital Notice Sharing Board  
-- PDF Inventory Report Output  
+
+![Add/Edit Item Modal with Validation](./Images//HomeStock%20MERN%20Development%20Guide%20-%20Google%20Chrome%204_29_2025%205_59_43%20PM.png)
+
+- Donation Submission & View Panel 
+
+![Donation Submission & View Panel](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_45%20PM.png)
+
+- Category Management & View Panel
+
+![Category Management & View Panel](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_29%20PM.png)
+
+- Profile Management
+
+![Profile Management](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_53%20PM.png
+
+
+
 
 ## ⚙️ Installation & Setup
 
