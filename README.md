@@ -14,8 +14,6 @@ A modern full-stack web application for efficiently managing household items, ca
 - [🖼️ Screenshots](#️-screenshots)
 - [⚙️ Installation & Setup](#️-installation--setup)
 - [📂 Project Structure](#-project-structure)
-- [📄 License](#-license)
-
 
 
 ## 🚀 Features
@@ -49,3 +47,22 @@ A modern full-stack web application for efficiently managing household items, ca
 - 🔐 JWT for authentication  
 - 🔄 RESTful API structure  
 - 🔍 ESLint & Prettier for code quality  
+
+## 👥 Team & Responsibilities
+
+| Name                          | Student ID     | Responsibilities                                                                 |
+|------------------------------|----------------|----------------------------------------------------------------------------------|
+| **P.L.G.Oshan Lahiru Kumara**| IT22569318     | 🔹 Donation Management<br>🔹 Digital Community-based Notice Sharing              |
+| **Kalehewatta K.K.K.G.**     | IT22576248     | 🔹 Item Management (CRUD operations, filtering, expiry validation)               |
+| **Kaushan M.K.**             | IT22569622     | 🔹 User Management (Registration, Login, Role-based access)                      |
+| **Ranasinghe K.D.**          | IT22594990     | 🔹 Category Management (Category CRUD and UI integration)                        |
+
+## 🖼️ Screenshots
+
+> 📌 *(Insert screenshots or link to the `/screenshots/` directory if hosted on GitHub)*
+
+- Item Management Table  
+- Add/Edit Item Modal with Validation  
+- Donation Submission & View Panel  
+- Digital Notice Sharing Board  
+- PDF Inventory Report Output  
