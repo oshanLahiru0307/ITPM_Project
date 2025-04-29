@@ -45,6 +45,23 @@ const addUser = async (req,res)=> {
     }
 }
 
+
+// const addUser = async (req, res) => {
+//     const { name, email, password, phone, address, picture } = req.body;
+//     try {
+//         const existingUser = await UserSchema.findOne({ email });
+//         if (existingUser) return res.status(409).json({ error: "Email already exists." });
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newUser = await UserSchema.create({ name, email, password: hashedPassword, phone, address, picture });
+
+//         res.status(201).json(newUser);
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to register user." });
+//     }
+// };
+
+
 //update user...
 const updateUser = async (req,res)=> {
     const {id} = req.params
@@ -53,7 +70,7 @@ const updateUser = async (req,res)=> {
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error: error})
-        console.log("error while updating",error)
+        console.log("print error",error)
     }
 }
 
