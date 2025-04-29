@@ -73,7 +73,27 @@ A modern full-stack web application for efficiently managing household items, ca
 - Node.js ≥ 16  
 - MongoDB installed locally or a cloud URI (MongoDB Atlas)
 
-### 📥 Clone the Repository
-- ### Bash
-   - git clone https://github.com/oshanLahiru0307/ITPM_Project.git
-  - cd ITPM_Project
+## 🔌 TO Get The Project
+```bash
+git clone https://github.com/oshanLahiru0307/ITPM_Project.git
+cd ITPM_Project
+```
+
+### 🔌 Backend Setup
+```bash
+cd backend
+npm install
+# Create a .env file and add:
+# MONGO_URI=<your_mongodb_connection_string>
+# JWT_SECRET=<your_secret>
+npm start
+```
+
+### 🌐 Frontend Setup
+```bash
+cd frontend
+npm install
+npm start
+```
+
+> App will run on `http://localhost:3000`
