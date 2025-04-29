@@ -24,18 +24,18 @@ const Categories = () => {
     try {
       if (!selectedItem) {
         await CategoryController.addCategory(values)
-        console.log("data added successfuly!")
+        console.log("new data added successfuly!")
 
       } else {
         await CategoryController.updateCategory(selectedItem._id, values)
-        console.log('data updated successfuly')
+        console.log('new data updated successfuly')
       }
       SetmodalVisible(false)
-      message.success('Category  saved successfuly')
+      message.success('New Category  saved successfuly')
       fetchCategories()
     } catch (error) {
       console.error(error)
-      message.error('failed to saved item!')
+      message.error('failed to saved Category!')
     }
   }
 
