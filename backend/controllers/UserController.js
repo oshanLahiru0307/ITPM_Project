@@ -76,11 +76,11 @@ const loginUser = async (req, res)=> {
     try{
         const user = await UserSchema.findOne({email:email})
         if(!user){
-           return res.status(400).json({mssg:"user name is wrong..."})
+           return res.status(400).json({mssg:"user name is wrong"})
         }
         const matchUser = await bcrypt.compare(password,user.password)
         if(!matchUser){
-        return res.status(400).json({mssg:"password is wrong..."}) 
+        return res.status(400).json({mssg:"password is wrong"}) 
         }
         const token = jwttoken.sign({id:user._id}, process.env.SECRET_KEY)
         delete user.password
