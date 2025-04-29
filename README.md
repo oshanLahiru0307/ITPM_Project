@@ -91,7 +91,6 @@ A modern full-stack web application for efficiently managing household items, ca
 
 
 
-
 ## ⚙️ Installation & Setup
 
 ### 🔧 Prerequisites
