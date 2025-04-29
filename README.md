@@ -66,3 +66,14 @@ A modern full-stack web application for efficiently managing household items, ca
 - Donation Submission & View Panel  
 - Digital Notice Sharing Board  
 - PDF Inventory Report Output  
+
+## ⚙️ Installation & Setup
+
+### 🔧 Prerequisites
+- Node.js ≥ 16  
+- MongoDB installed locally or a cloud URI (MongoDB Atlas)
+
+### 📥 Clone the Repository
+- ### Bash
+   - git clone https://github.com/oshanLahiru0307/ITPM_Project.git
+  - cd ITPM_Project
