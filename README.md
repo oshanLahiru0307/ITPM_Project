@@ -29,3 +29,14 @@ A modern full-stack web application for efficiently managing household items, ca
 - ✅ Expiry Date Validation and Notifications  
 - ✅ PDF Report Generation of Inventory Items  
 - ✅ Fully Responsive Interface (Mobile + Desktop)  
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:**  
+- ⚛️ React.js  
+- 🎨 Ant Design (UI Library)  
+- 📅 Moment.js (Date formatting)  
+- 🧠 Valtio (State Management)  
+- 🧾 jsPDF (PDF Export)  
