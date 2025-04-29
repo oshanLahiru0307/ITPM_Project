@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Input, Modal, message } from 'antd';
 import UserController from '../Services/UserController';
 import state from '../State/state';
+import { useSnapshot } from 'valtio';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const snap = useSnapshot(state)
   const navigate = useNavigate()
   const [form] = Form.useForm();
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -14,7 +16,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user')) || state.currentUser;
+    const storedUser = snap.currentUser
     if (storedUser) {
       setUser(storedUser);
     }
