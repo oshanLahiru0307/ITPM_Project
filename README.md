@@ -87,7 +87,7 @@ A modern full-stack web application for efficiently managing household items, ca
 
 - Profile Management
 
-![Profile Management](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_53%20PM.png
+![Profile Management](./Images/React%20App%20-%20Google%20Chrome%204_29_2025%205_48_53%20PM.png)
 
 
 
