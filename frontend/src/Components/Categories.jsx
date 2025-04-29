@@ -15,7 +15,7 @@ const Categories = () => {
       const data = await CategoryController.getAllCategories()
       SetCategories(data)
     } catch (error) {
-      console.error('error while fetching categories', error)
+      console.error('error while fetching categories page', error)
     }
   }
 
