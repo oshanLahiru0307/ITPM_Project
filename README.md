@@ -17,3 +17,15 @@ A modern full-stack web application for efficiently managing household items, ca
 - [📄 License](#-license)
 
 ---
+
+## 🚀 Features
+
+- ✅ User Authentication & Authorization  
+- ✅ Add, Edit, Delete & View Household Items  
+- ✅ Category Management (Food, Medicine, Stationery, etc.)  
+- ✅ Donation Management with Quantity Validation  
+- ✅ Community-Based Notice Sharing (Digital Board)  
+- ✅ Search, Sort & Filter Items by Category, Name, or Expiry  
+- ✅ Expiry Date Validation and Notifications  
+- ✅ PDF Report Generation of Inventory Items  
+- ✅ Fully Responsive Interface (Mobile + Desktop)  
