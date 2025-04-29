@@ -105,7 +105,7 @@ const Categories = () => {
         }}>Add Category</Button>
       <Table dataSource={categories} columns={columns} />
       <Modal
-        title={selectedItem ? 'Edit Item' : 'Add Item'}
+        title={selectedItem ? 'Edit Category' : 'Add Category'}
         open={modalVisible}
         onCancel={handleCancle}
         onOk={() => {
