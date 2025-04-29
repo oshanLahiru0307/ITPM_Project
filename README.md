@@ -5,7 +5,7 @@ A modern full-stack web application for efficiently managing household items, ca
 > 🎓 Final Project – 3rd Year 2nd Semester  
 > Faculty of Computing, Sri Lanka Institute of Information Technology (SLIIT)
 
----
+
 ## 📌 Table of Contents
 
 - [🚀 Features](#-features)
@@ -16,7 +16,7 @@ A modern full-stack web application for efficiently managing household items, ca
 - [📂 Project Structure](#-project-structure)
 - [📄 License](#-license)
 
----
+
 
 ## 🚀 Features
 
@@ -30,7 +30,7 @@ A modern full-stack web application for efficiently managing household items, ca
 - ✅ PDF Report Generation of Inventory Items  
 - ✅ Fully Responsive Interface (Mobile + Desktop)  
 
----
+
 
 ## 🛠️ Tech Stack
 
