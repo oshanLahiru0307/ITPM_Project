@@ -38,7 +38,7 @@ const addUser = async (req,res)=> {
             res.status(200).json(response)
         }
         else{
-            res.status(402).json({error: "user email is already exist!!!."}) 
+            res.status(402).json({error: "user email is already exist."}) 
         }
     }catch(error){
         res.status(400).json({error: error})
