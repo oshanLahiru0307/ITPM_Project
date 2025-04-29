@@ -73,7 +73,7 @@ A modern full-stack web application for efficiently managing household items, ca
 - Node.js ≥ 16  
 - MongoDB installed locally or a cloud URI (MongoDB Atlas)
 
-## 🔌 TO Get The Project
+### 🔌 TO Get The Project
 ```bash
 git clone https://github.com/oshanLahiru0307/ITPM_Project.git
 cd ITPM_Project
@@ -97,3 +97,23 @@ npm start
 ```
 
 > App will run on `http://localhost:3000`
+
+## 📂 Project Structure
+
+```
+home-management-system/
+├── frontend/
+│   ├── components/
+│   ├── pages/
+│   ├── state/          
+│   ├── utils/
+│   └── App.js
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   └── server.js
+└── README.md
+```
+---
