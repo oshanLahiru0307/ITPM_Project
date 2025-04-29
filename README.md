@@ -40,3 +40,12 @@ A modern full-stack web application for efficiently managing household items, ca
 - 📅 Moment.js (Date formatting)  
 - 🧠 Valtio (State Management)  
 - 🧾 jsPDF (PDF Export)  
+
+**Backend:**  
+- 🌐 Node.js & Express.js  
+- 🍃 MongoDB + Mongoose (Database)  
+
+**Other Tools:**  
+- 🔐 JWT for authentication  
+- 🔄 RESTful API structure  
+- 🔍 ESLint & Prettier for code quality  
