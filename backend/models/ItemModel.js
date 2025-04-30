@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-
+// item schema validations
 const ItemSchema = new Schema({
     name: {
         type: String,
