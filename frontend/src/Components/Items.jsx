@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Button, message, Table, Modal, Form, Input, InputNumber, DatePicker, Select } from 'antd';
-import itemController from '../Services/ItemController';
+import itemController from '../Services/ItemController';          // import item controller
 import categoryController from '../Services/CategoryController';  // Import category controller
 
 const { Option } = Select;
