@@ -25,9 +25,11 @@ const getItem = async (req,res)=> {
 //add item from item page
 
 const addItem = async (req,res)=> {
-    try{
+
+    // catch errors when adding items
+    try{ 
         const {name, description, price, category, qty, mfd, expd} = req.body
-        const response = await Items.create({name, description, price, category, qty, mfd, expd})
+        const response = await Items.create({name, description, price, category, qty, mfd, expd})  
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error:error})
