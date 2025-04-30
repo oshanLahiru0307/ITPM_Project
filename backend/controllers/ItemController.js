@@ -1,4 +1,4 @@
-const Items = require('../models/ItemModel')
+const Items = require('../models/ItemModel') //import item model
 
 //get item...
 const getItems = async (req,res)=> {
@@ -10,7 +10,7 @@ const getItems = async (req,res)=> {
     }
 }
 
-//get items...
+//get items from item page
 
 const getItem = async (req,res)=> {
     try{
@@ -22,7 +22,7 @@ const getItem = async (req,res)=> {
     }
 }
 
-//add item...
+//add item from item page
 
 const addItem = async (req,res)=> {
     try{
