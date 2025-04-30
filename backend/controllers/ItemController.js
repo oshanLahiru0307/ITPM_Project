@@ -60,6 +60,7 @@ const deelteItem = async (req,res)=> {
     }
 }
 
+//export to model
 module.exports = {
     getItems,
     getItem,
