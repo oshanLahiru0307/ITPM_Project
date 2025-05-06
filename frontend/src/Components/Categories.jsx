@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Form, Modal, Input, Card, Input as AntInput } from 'antd';
+import { Table, Button, message, Form, Modal, Input, Card, Spin, Row, Col } from 'antd';
 import CategoryController from '../Services/CategoryController';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
 
-const { Search } = AntInput;
+const { Search } = Input;
 
 const Categories = () => {
   const snap = useSnapshot(state);
@@ -16,37 +16,52 @@ const Categories = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [sortedInfo, setSortedInfo] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 576);
+      setIsTablet(width > 576 && width <= 992);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchCategories = async () => {
+    setLoading(true);
     const user = snap.currentUser._id;
     try {
       const data = await CategoryController.getAllCategoriesByUser(user);
       setCategories(data);
-      setFilteredData(data); // Initialize filtered data
+      setFilteredData(data);
     } catch (error) {
       console.error('error while fetching categories', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAddCategory = async (values) => {
     const formatedData = {
-      user:snap.currentUser._id,
+      user: snap.currentUser._id,
       ...values
-    }
+    };
     try {
       if (!selectedItem) {
         await CategoryController.addCategory(formatedData);
-        console.log('data added successfuly!');
       } else {
         await CategoryController.updateCategory(selectedItem._id, formatedData);
-        console.log('data updated successfuly');
       }
       setModalVisible(false);
-      message.success('Category saved successfuly');
+      message.success('Category saved successfully');
       fetchCategories();
     } catch (error) {
       console.error(error);
-      message.error('failed to saved item!');
+      message.error('Failed to save item!');
     }
   };
 
@@ -59,11 +74,11 @@ const Categories = () => {
   const handleDelete = async (categoryId) => {
     try {
       await CategoryController.deleteCategory(categoryId);
-      message.success('Category deleted successfuly');
+      message.success('Category deleted successfully');
       fetchCategories();
     } catch (error) {
       console.error(error);
-      message.error('Faled to delete Category!');
+      message.error('Failed to delete category!');
     }
   };
 
@@ -85,7 +100,7 @@ const Categories = () => {
   };
 
   const handleSearchChange = (e) => {
-    handleSearch(e.target.value); // Call handleSearch with the input value
+    handleSearch(e.target.value);
   };
 
   const generatePDF = () => {
@@ -148,26 +163,66 @@ const Categories = () => {
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
-      <Card hoverable style={{ width: '100%', height: '663px' }} title={<h3 style={{ color: '#007FFF' }}>Categories</h3>}
-        extra={<Button type='primary' style={{ float: 'right' }} onClick={() => { setModalVisible(true) }}>+ Add Category</Button>}>
+      <Card
+        hoverable
+        style={{ width: '100%', height: '663px' }}
+        title={<h3 style={{ color: '#007FFF' }}>Categories</h3>}
+        extra={<Button type='primary' style={{ float: 'right' }} onClick={() => setModalVisible(true)}>+ Add Category</Button>}
+      >
+        <Row gutter={[16, 16]} justify="space-between" align="middle">
+          <Col xs={24} sm={24} md={12} lg={8}>
+            <Search
+              placeholder="Search by Category Name"
+              onChange={handleSearchChange}
+              allowClear
+              enterButton="Search"
+              size="middle"
+              style={{ width: '100%', marginBottom: 20 }}
+            />
+          </Col>
+          <Col xs={24} sm={24} md={12} lg={4}>
+            <Button
+              type="primary"
+              onClick={generatePDF}
+              block={isMobile || isTablet}
+              style={{
+                float: isMobile || isTablet ? "none" : "right",
+                width: isMobile || isTablet ? "100%" : "auto",
+                marginBottom: 20
+              }}
+            >
+              Generate PDF
+            </Button>
+          </Col>
+        </Row>
 
-        <Search
-          placeholder="Search by Category Name"
-          onChange={handleSearchChange}
-          allowClear
-          enterButton="Search"
-          size="medium"
-          style={{ width: 300, marginBottom: 20 }}
-        />
-        <Button
-          type="primary"
-          onClick={generatePDF}
-          style={{ marginLeft: 10, marginBottom: 20, float: 'right' }}
+        <Spin spinning={loading} tip="Loading Categories...">
+          <Table
+            dataSource={filteredData}
+            columns={columns}
+            onChange={handleTableChange}
+            rowKey="_id"
+            pagination={{ pageSize: 6 }}
+            scroll={{ x: "max-content" }}
+          />
+        </Spin>
+
+        <Modal
+          title={selectedItem ? 'Edit Category' : 'Add Category'}
+          open={modalVisible}
+          onCancel={handleCancel}
+          onOk={() => {
+            form
+              .validateFields()
+              .then((values) => {
+                handleAddCategory(values);
+                form.resetFields();
+              })
+              .catch(() => {
+                message.error("Fill all the required fields!");
+              });
+          }}
         >
-          Generate PDF
-        </Button>
-        <Table dataSource={filteredData} columns={columns} onChange={handleTableChange} />
-        <Modal title={selectedItem ? 'Edit Item' : 'Add Item'} open={modalVisible} onCancel={handleCancel} onOk={() => { form.validateFields().then((values) => { handleAddCategory(values); form.resetFields(); }).catch((info) => { console.log('Validate Failed:', info); message.error("fill all the rquired fields!.")}); }}>
           <Form form={form} layout="vertical">
             <Form.Item name="name" label="Category" rules={[{ required: true, message: 'Please enter category name' }]}>
               <Input />

@@ -14,7 +14,6 @@ const getUser = async (req,res)=> {
         res.status(400).json({error: error})
     }
 }
-// 12345
 
 //get users...
 const getUsers = async (req,res)=> {

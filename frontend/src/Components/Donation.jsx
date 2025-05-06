@@ -87,7 +87,7 @@ const Donation = () => {
             + Add Donation
           </Button>
         }
-        style={{ width: "100%", height: "663px" }}
+        style={{ width: "100%", minHeight: "663px" }}
         title={<h3 style={{ color: "#007FFF" }}>Donation</h3>}
         tabList={tabList}
         activeTabKey={activeTabKey1}
