@@ -37,7 +37,7 @@ const AdminDashbord = () => {
 
   return (
     <Layout  style={{ minHeight: '100vh' }}>
-      <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider theme='dark' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <Title
           level={3}
           style={{
@@ -49,7 +49,7 @@ const AdminDashbord = () => {
           Home Stock
         </Title>
 
-        <Menu theme='light' defaultSelectedKeys={['0']} mode="inline">
+        <Menu theme='dark' defaultSelectedKeys={['0']} mode="inline">
           <Menu.Item
             key="0"
             icon={<HomeOutlined/>}
@@ -90,24 +90,17 @@ const AdminDashbord = () => {
           >
             Donation
           </Menu.Item>
+
           <Menu.Item
             key="5"
-            icon={<ProfileOutlined />}
-            onClick={() => { state.activeIndex = 5; }}
-            style={{ marginBottom: "15px" }}
-          >
-            Profile
-          </Menu.Item>
-          <Menu.Item
-            key="6"
             icon={<AppstoreAddOutlined />}
-            onClick={() => { state.activeIndex = 6; }}
+            onClick={() => { state.activeIndex = 5; }}
             style={{ marginBottom: "15px" }}
           >
             Add Banner
           </Menu.Item>
           <Menu.Item
-            key="7"
+            key="6"
             icon={<LogoutOutlined />}
             onClick={() => { 
               state.currentUser = null
@@ -130,8 +123,7 @@ const AdminDashbord = () => {
           {snap.activeIndex === 2 && <AdminCategories/>}
           {snap.activeIndex === 3 && <AdminUserView/>}
           {snap.activeIndex === 4 && <AdminDonation/>}
-          {snap.activeIndex === 5 && <Profile/>}
-          {snap.activeIndex === 6 && <AdminBanerAdd/>}
+          {snap.activeIndex === 5 && <AdminBanerAdd/>}
 
         </Content>
       </Layout>

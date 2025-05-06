@@ -5,8 +5,6 @@ import UserController from "../Services/UserController";
 
 const Home = () => {
   const [latestUsers, setLatestUsers] = useState([]);
-  const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,12 +15,9 @@ const Home = () => {
         );
         setLatestUsers(sortedUsers.slice(0, 5));
 
-        const bannerData = await BannerController.getBanners();
-        setBanners(bannerData);
       } catch (err) {
         console.error("Failed to fetch data:", err);
       } finally {
-        setLoading(false);
       }
     };
 
@@ -42,36 +37,6 @@ const Home = () => {
         title={<h3 style={{ color: "#007FFF" }}>Home</h3>}
         style={{ minHeight: "663px" }}
       >
-        <Spin spinning={loading} tip="Loading Dashboard...">
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Card
-              style={{
-                width: "100%",
-                height: "230px",
-                padding: 0,
-                margin: 0,
-                overflow: "hidden",
-              }}
-              bodyStyle={{ padding: 0 }}
-            >
-              <Carousel autoplay autoplaySpeed={3000} effect="fade">
-                {banners.map((banner) => (
-                  <div key={banner._id}>
-                    <img
-                      src={banner.image}
-                      alt="banner"
-                      style={{
-                        width: "100%",
-                        height: "230px",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                  </div>
-                ))}
-              </Carousel>
-            </Card>
-
             <Row gutter={[16, 16]} style={{ width: "100%" }}>
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px" }}>
@@ -120,8 +85,6 @@ const Home = () => {
                 <Card style={{ height: "300px" }}>New Items</Card>
               </Col>
             </Row>
-          </Space>
-        </Spin>
       </Card>
     </div>
   );
