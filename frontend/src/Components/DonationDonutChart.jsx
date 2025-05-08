@@ -85,7 +85,7 @@ const DonationDonutChart = () => {
 
   return <div
   style={{
-    width:'300px',
+    width:'350px',
     height:'240px',
   }}>
     <Pie {...config} />

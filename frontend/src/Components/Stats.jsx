@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import UserController from "../Services/UserController";
 import BarChartView from './ItemBarChart'
 import DonationDonutChart from "./DonationDonutChart";
+import AllDonationDonutChart from './AllDonationDonutChart';
 import PieChartView from './ItemPieChart'
 import CategoryController from '../Services/CategoryController';
 import { useSnapshot } from 'valtio';
@@ -135,7 +136,7 @@ const Stats = () => {
               <Col xs={24} md={24} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"}}>
                 <h2 style={{color:'#1F75FE', margin:'0'}}>All Donation</h2>
-                    <DonationDonutChart/>
+                    <AllDonationDonutChart/>
                 </Card>
               </Col>
 
