@@ -47,7 +47,7 @@ const Stats = () => {
 
 
   return (
-    <div>
+    <div style={{ marginTop: "20px", marginBottom: "20px" }}>
        <Row gutter={[16, 16]} style={{ width: "100%" }}>
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px", backgroundColor: "#F0F8FF" }}>

@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { Card } from "antd";
 import NoticeBanner from "./NoticeBanner";
-import UserList from "./UserList";
-
-
-
 import Stats from "./Stats";
-const tabList = [
+
+/*const tabList = [
   { key: "NoticeBanner", tab: "Notices" },
   { key: "Stats", tab: "Statistics" },
-];
+];*/
 
 const Home = () => {
 
-  const [activeTabKey1, setActiveTabKey1] = useState("NoticeBanner");
-  const onTab1Change = (key) => setActiveTabKey1(key);
+  //const [activeTabKey1, setActiveTabKey1] = useState("NoticeBanner");
+  //const onTab1Change = (key) => setActiveTabKey1(key);
   return (
     <div
       style={{
@@ -27,12 +24,14 @@ const Home = () => {
         hoverable={true}
         title={<h3 style={{ color: "#007FFF" }}>Home</h3>}
         style={{ minHeight: "663px"}}
-        tabList={tabList}
-        activeTabKey={activeTabKey1}
-        onTabChange={onTab1Change}
+        //tabList={tabList}
+        //activeTabKey={activeTabKey1}
+        //onTabChange={onTab1Change}
         
       >
-        {activeTabKey1 === "NoticeBanner" ? <NoticeBanner /> : <Stats />}
+        {/*activeTabKey1 === "NoticeBanner" ? <NoticeBanner /> : <Stats />*/}
+        <NoticeBanner />
+        <Stats />
       </Card>
     </div>
   );
