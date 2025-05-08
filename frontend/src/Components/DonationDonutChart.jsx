@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Pie } from '@ant-design/plots';
-import ItemController from '../Services/ItemController';
+import DonationController from '../Services/DonationController';
 import { useSnapshot } from 'valtio';
 import state from '../State/state';
 
-const ItemPieChart = () => {
+const DonationDonutChart = () => {
   const snap = useSnapshot(state);
   const [items, setItems] = useState([]);
   const [pieChartData, setPieChartData] = useState([]);
@@ -13,14 +13,14 @@ const ItemPieChart = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await ItemController.getItemsByUser(userId);
+      const response = await DonationController.getUserDonation(userId);
       if (response) {
         setItems(response);
       } else {
-        console.log("Error fetching items");
+        console.log("Error fetching donation");
       }
     } catch (error) {
-      console.error("Error fetching items:", error);
+      console.error("Error fetching donation:", error);
     }
   };
 
@@ -54,10 +54,11 @@ const ItemPieChart = () => {
     data: pieChartData,
     angleField: 'value',
     colorField: 'type',
+    innerRadius: 0.6,
     label: {
       text: 'value',
       style: {
-        fontWeight: 'normal',
+        fontWeight: 'bold',
       },
     },
     legend: {
@@ -67,14 +68,19 @@ const ItemPieChart = () => {
         rowPadding: 5,
       },
     },
-    title: { // Add this title property
-      text: 'Distribution of Items by Category', // Your chart title
-      style: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center', // Optional: center the title
+    annotations: [
+      {
+        type: 'text',
+        style: {
+          text: 'Donation\nCharts',
+          x: '50%',
+          y: '50%',
+          textAlign: 'center',
+          fontSize: 15,
+          fontStyle: 'bold',
+        },
       },
-    },
+    ],
   };
 
   return <div
@@ -86,4 +92,4 @@ const ItemPieChart = () => {
   </div>;
 };
 
-export default ItemPieChart;
+export default DonationDonutChart;

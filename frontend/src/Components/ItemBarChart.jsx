@@ -96,8 +96,8 @@ const ItemBarChart = () => {
   };
   return <div
   style={{
-    height:"400px",
-    width:"400px",
+    height:"300px",
+    width:"300px",
   }}>
     <Column {...config} />
   </div>;

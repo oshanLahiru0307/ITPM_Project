@@ -4,6 +4,7 @@ import NoticeBanner from "./NoticeBanner";
 import UserList from "./UserList";
 import BarChartView from './ItemBarChart'
 import PieChartView from './ItemPieChart'
+import DonationDonutChart from "./DonationDonutChart";
 const tabList = [
   { key: "NoticeBanner", tab: "Notices" },
   { key: "Stats", tab: "Stats" },
@@ -35,9 +36,12 @@ const Home = () => {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
         }}>
           <BarChartView/>
           <PieChartView/>
+          <DonationDonutChart/>
         </div> }
       </Card>
     </div>
