@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import dayjs from "dayjs";
 import {
   Button,
   message,
@@ -14,8 +15,9 @@ import {
   Row,
   Col,
   Spin,
+  Popconfirm,
 } from "antd";
-import { EditOutlined, DeleteOutlined, GiftOutlined } from "@ant-design/icons"; // Import icons
+import { EditOutlined, DeleteOutlined, GiftOutlined } from "@ant-design/icons";
 import itemController from "../Services/ItemController";
 import categoryController from "../Services/CategoryController";
 import DonationController from "../Services/DonationController";
@@ -23,7 +25,6 @@ import state from "../State/state";
 import { useSnapshot } from "valtio";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import dayjs from "dayjs";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -54,20 +55,6 @@ const Items = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const fetchItems = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const data = await moment.getAllUsers();
-  //     setItems(data);
-  //     setFilteredData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     message.error("Failed to load data.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   useEffect(() => {
     fetchItems();
     fetchCategories();
@@ -83,9 +70,9 @@ const Items = () => {
     } catch (error) {
       console.error(error);
       message.error("Failed to load data.");
-    }finally {
-       setLoading(false);
-       }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchCategories = async () => {
@@ -221,8 +208,8 @@ const Items = () => {
       item.price,
       item.category,
       item.qty,
-      new Date(item.mfd).toLocaleDateString(),
-      new Date(item.expd).toLocaleDateString(),
+      item.mfd ? new Date(item.mfd).toLocaleDateString() : "",
+      item.expd ? new Date(item.expd).toLocaleDateString() : "",
     ]);
 
     autoTable(doc, {
@@ -242,51 +229,51 @@ const Items = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.description.localeCompare(b.description),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.category.localeCompare(b.category),
     },
     {
       title: "Qty",
       dataIndex: "qty",
       key: "qty",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.qty - b.qty,
     },
     {
       title: "Manufacturing Date",
       dataIndex: "mfd",
       key: "mfd",
-      sorter: (a, b) => (moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1),
+      sorter: (a, b) => (a.mfd && b.mfd ? moment(a.mfd).valueOf() - moment(b.mfd).valueOf() : 0),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
       title: "Expiry Date",
       dataIndex: "expd",
       key: "expd",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => (a.expd && b.expd ? moment(a.expd).valueOf() - moment(b.expd).valueOf() : 0),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
       title: "Added Date",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => moment(a.updatedAt).valueOf() - moment(b.updatedAt).valueOf(),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
@@ -301,14 +288,16 @@ const Items = () => {
           >
             Edit
           </Button>
-          <Button
-            type="primary"
-            danger
-            style={{ marginRight: "5px" }}
-            onClick={() => handleDeleteItem(record._id)}
+          <Popconfirm
+            title="Are you sure you want to delete this item?"
+            onConfirm={() => handleDeleteItem(record._id)}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </Button>
+            <Button type="primary" danger style={{ marginRight: "5px" }}>
+              Delete
+            </Button>
+          </Popconfirm>
           <Button
             type="primary"
             style={{ background: "#5CD85A" }}
@@ -331,7 +320,7 @@ const Items = () => {
     >
       <Card
         hoverable
-        style={{ width: "100%", height: "663px", background:'#F0F8FF' }}
+        style={{ width: "100%", height: "663px", background: "#F0F8FF" }}
         title={<h3 style={{ color: "#007FFF" }}>Items</h3>}
         extra={
           <Button type="primary" onClick={() => setModalVisible(true)}>
@@ -366,14 +355,14 @@ const Items = () => {
           </Col>
         </Row>
         <Spin spinning={loading} tip="Loading Items...">
-        <Table
-          dataSource={filteredData}
-          columns={columns}
-          rowKey="_id"
-          pagination={{ pageSize: 6 }}
-          onChange={handleTableChange}
-          scroll={{ x: "max-content" }}
-        />
+          <Table
+            dataSource={filteredData}
+            columns={columns}
+            rowKey="_id"
+            pagination={{ pageSize: 6 }}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
         </Spin>
         {/* Add/Edit Modal */}
         <Modal

@@ -13,7 +13,7 @@ import {
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
 import { useNavigate } from 'react-router-dom';
-import Home from '../Components/Home'
+import AdminHome from '../Components/AdminHome'
 import Items from '../Components/Items'
 import AdminCategories from '../adminComponents/AdminCategories'
 import AdminDonation from '../adminComponents/AdminAllDonation';
@@ -41,7 +41,7 @@ const AdminDashbord = () => {
         <Title
           level={3}
           style={{
-            color: '#007FFF',
+            color: '#FFFFFF',
             textAlign: 'center',
             marginBottom: '30px' // Increased gap below title
           }}
@@ -118,7 +118,7 @@ const AdminDashbord = () => {
 
       <Layout>
         <Content>
-          {snap.activeIndex === 0 && <Home/>}
+          {snap.activeIndex === 0 && <AdminHome/>}
           {snap.activeIndex === 1 && <AdminItems/>}
           {snap.activeIndex === 2 && <AdminCategories/>}
           {snap.activeIndex === 3 && <AdminUserView/>}

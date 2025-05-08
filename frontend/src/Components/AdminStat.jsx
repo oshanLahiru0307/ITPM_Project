@@ -2,20 +2,17 @@ import React from 'react'
 import { Card, Col, Row, List } from 'antd';
 import { useState, useEffect } from 'react';
 import UserController from "../Services/UserController";
-import BarChartView from './ItemBarChart'
-import DonationDonutChart from "./DonationDonutChart";
+import AdminBarChartView from './AdminBarChart'
+import AdminDonationDonutChart from "./AdminDonationDonutChart";
 import AllDonationDonutChart from './AllDonationDonutChart';
-import PieChartView from './ItemPieChart'
 import CategoryController from '../Services/CategoryController';
-import { useSnapshot } from 'valtio';
-import state from '../State/state';
+import AdminPieChartView from './AdminPieChartView';
 
-const Stats = () => {
+const AdminStats = () => {
 
     const [latestUsers, setLatestUsers] = useState([]);
     const [categories, setCategories] = useState([]);
-    const snap = useSnapshot(state);
-    const userId = snap.currentUser._id;
+    
 
     const fetchData = async () => {
         try {
@@ -32,7 +29,7 @@ const Stats = () => {
 
       const fetchCategories = async () => {
         try {
-          const categories = await CategoryController.getAllCategoriesByUser(userId);
+          const categories = await CategoryController.getAllCategories();
           console.log("Categories:", categories);
           setCategories(categories);
         } catch (err) {
@@ -51,16 +48,16 @@ const Stats = () => {
        <Row gutter={[16, 16]} style={{ width: "100%" }}>
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px", backgroundColor: "#F0F8FF" }}>
-                <h2 style={{color:'#1F75FE', margin:'0'}}>Item Distribution</h2>
-                  <BarChartView/>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Items</h2>
+                  <AdminBarChartView/>
                 </Card>
               </Col>
               
               
               <Col xs={24} md={24} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
-                <h2 style={{color:'#1F75FE', margin:'0'}}>My Donation</h2>
-                    <DonationDonutChart/>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Donations</h2>
+                    <AdminDonationDonutChart/>
                 </Card>
               </Col>
 
@@ -128,14 +125,14 @@ const Stats = () => {
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
                 <h2 style={{color:'#1F75FE', margin:'0'}}>Item Distribution</h2>
-                  <PieChartView/>
+                  <AdminPieChartView/>
                 </Card>
               </Col>
               
               
               <Col xs={24} md={24} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"}}>
-                <h2 style={{color:'#1F75FE', margin:'0'}}>All Donation</h2>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Donation Distribution</h2>
                     <AllDonationDonutChart/>
                 </Card>
               </Col>
@@ -145,4 +142,4 @@ const Stats = () => {
   )
 }
 
-export default Stats
+export default AdminStats

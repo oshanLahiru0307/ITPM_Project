@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Pie } from '@ant-design/plots';
-import DonationController from '../Services/DonationController';
+import ItemController from '../Services/ItemController';
 
-const AllDonationDonutChart = () => {
+const AdminPieChartView = () => {
 
   const [items, setItems] = useState([]);
   const [pieChartData, setPieChartData] = useState([]);
@@ -10,14 +10,14 @@ const AllDonationDonutChart = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await DonationController.getDonation();
+      const response = await ItemController.getItems();
       if (response) {
         setItems(response);
       } else {
-        console.log("Error fetching donation");
+        console.log("Error fetching items");
       }
     } catch (error) {
-      console.error("Error fetching donation:", error);
+      console.error("Error fetching items:", error);
     }
   };
 
@@ -51,11 +51,10 @@ const AllDonationDonutChart = () => {
     data: pieChartData,
     angleField: 'value',
     colorField: 'type',
-    innerRadius: 0.6,
     label: {
       text: 'value',
       style: {
-        fontWeight: 'bold',
+        fontWeight: 'normal',
       },
     },
     legend: {
@@ -65,28 +64,15 @@ const AllDonationDonutChart = () => {
         rowPadding: 5,
       },
     },
-    annotations: [
-      {
-        type: 'text',
-        style: {
-          text: 'Donation\nChart',
-          x: '50%',
-          y: '50%',
-          textAlign: 'center',
-          fontSize: 15,
-          fontStyle: 'bold',
-        },
-      },
-    ],
   };
 
   return <div
   style={{
-    width:'400px',
-    height:'240px',
+    width:'300px',
+    height:'250px',
   }}>
     <Pie {...config} />
   </div>;
 };
 
-export default AllDonationDonutChart;
+export default AdminPieChartView;

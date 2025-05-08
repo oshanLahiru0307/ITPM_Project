@@ -13,6 +13,7 @@ import {
   DatePicker,
   Row,
   Col,
+  Popconfirm, // Import Popconfirm
 } from "antd";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -125,9 +126,8 @@ const MyDonations = ({ refresh }) => {
       donation.description,
       donation.category,
       donation.qty,
-      new Date(donation.mfd).toLocaleDateString(),
-      new Date(donation.expd).toLocaleDateString(),
-      new Date(donation.createdAt).toLocaleDateString(),
+      donation.mfd ? new Date(donation.mfd).toLocaleDateString() : "",
+      donation.expd ? new Date(donation.expd).toLocaleDateString() : "",
     ]);
 
     autoTable(doc, {
@@ -179,12 +179,11 @@ const MyDonations = ({ refresh }) => {
     }
   };
 
-  // Handle delete donation
-  const handleDeleteItem = async (id) => {
+  // Handle delete donation with Popconfirm
+  const handleDeleteConfirm = async (id) => {
     try {
       await DonationController.deleteDonation(id);
       message.success("Donation deleted successfully");
-
       fetchDonations();
     } catch (error) {
       console.error("Error deleting donation:", error);
@@ -242,20 +241,23 @@ const MyDonations = ({ refresh }) => {
           >
             Edit
           </Button>
-          <Button
-            type="primary"
-            danger
-            onClick={() => handleDeleteItem(record._id)}
+          <Popconfirm
+            title="Are you sure you want to delete this donation?"
+            onConfirm={() => handleDeleteConfirm(record._id)}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </Button>
+            <Button type="primary" danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
   ];
 
   return (
-    <div >
+    <div>
       <Row justify="space-between" align="middle" gutter={[16, 16]}>
         <Col xs={24} sm={24} md={12} lg={8}>
           <Search

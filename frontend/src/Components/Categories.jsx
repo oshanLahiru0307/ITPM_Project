@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message, Form, Modal, Input, Card, Spin, Row, Col } from 'antd';
+import { Table, Button, message, Form, Modal, Input, Card, Spin, Row, Col, Popconfirm } from 'antd';
 import CategoryController from '../Services/CategoryController';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -71,7 +71,7 @@ const Categories = () => {
     setModalVisible(true);
   };
 
-  const handleDelete = async (categoryId) => {
+  const handleDeleteConfirm = async (categoryId) => {
     try {
       await CategoryController.deleteCategory(categoryId);
       message.success('Category deleted successfully');
@@ -153,9 +153,16 @@ const Categories = () => {
           <Button type="primary" style={{ marginRight: '10px' }} onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button type="primary" danger onClick={() => handleDelete(record._id)}>
-            Delete
-          </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this category?"
+            onConfirm={() => handleDeleteConfirm(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="primary" danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </>
       ),
     },

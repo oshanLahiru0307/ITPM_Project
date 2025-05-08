@@ -159,7 +159,7 @@ const AdminCategories = () => {
         >
           Generate PDF
         </Button>
-        <Table dataSource={filteredData} columns={columns} onChange={handleTableChange} />
+        <Table dataSource={filteredData} columns={columns} onChange={handleTableChange} pagination={{ pageSize: 8 }} />
         <Modal title={selectedItem ? 'Edit Item' : 'Add Item'} open={modalVisible} onCancel={handleCancel} onOk={() => { form.validateFields().then((values) => { handleAddCategory(values); form.resetFields(); }).catch((info) => { console.log('Validate Failed:', info); }); }}>
           <Form form={form} layout="vertical">
             <Form.Item name="name" label="Category" rules={[{ required: true, message: 'Please enter category name' }]}>
