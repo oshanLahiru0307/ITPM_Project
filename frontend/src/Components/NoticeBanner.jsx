@@ -26,7 +26,7 @@ const NoticeBanner = () => {
         <div>
             <Spin spinning={loading} tip="Loading Dashboard...">
                 <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                        <Carousel autoplay autoplaySpeed={3000} effect="fade">
+                        <Carousel autoplay autoplaySpeed={3500} effect="fade">
                             {banners.map((banner) => (
                                 <div key={banner._id}>
                                     <img
