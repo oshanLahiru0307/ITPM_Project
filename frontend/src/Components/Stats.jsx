@@ -5,10 +5,16 @@ import UserController from "../Services/UserController";
 import BarChartView from './ItemBarChart'
 import DonationDonutChart from "./DonationDonutChart";
 import PieChartView from './ItemPieChart'
+import CategoryController from '../Services/CategoryController';
+import { useSnapshot } from 'valtio';
+import state from '../State/state';
 
 const Stats = () => {
 
     const [latestUsers, setLatestUsers] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const snap = useSnapshot(state);
+    const userId = snap.currentUser._id;
 
     const fetchData = async () => {
         try {
@@ -22,9 +28,20 @@ const Stats = () => {
           console.error("Failed to fetch data:", err);
         } 
       };
+
+      const fetchCategories = async () => {
+        try {
+          const categories = await CategoryController.getAllCategoriesByUser(userId);
+          console.log("Categories:", categories);
+          setCategories(categories);
+        } catch (err) {
+          console.error("Failed to fetch categories:", err);
+        }
+      }
   
      useEffect(() => {
         fetchData();
+        fetchCategories();
       }, []);
 
 
@@ -33,7 +50,7 @@ const Stats = () => {
        <Row gutter={[16, 16]} style={{ width: "100%" }}>
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px", backgroundColor: "#F0F8FF" }}>
-                  Bar Chart( Categories wise items)
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Item Distribution</h2>
                   <BarChartView/>
                 </Card>
               </Col>
@@ -41,7 +58,7 @@ const Stats = () => {
               
               <Col xs={24} md={24} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
-                    Donation
+                <h2 style={{color:'#1F75FE', margin:'0'}}>My Donation</h2>
                     <DonationDonutChart/>
                 </Card>
               </Col>
@@ -50,8 +67,8 @@ const Stats = () => {
               <Col xs={24} md={12} lg={8}>
                 <Card
                   style={{ height: "300px", overflowY: "auto",  backgroundColor: "#F0F8FF"  }}
-                  title={<h3 style={{ margin: 0 }}>New Users</h3>}
                 >
+                <h2 style={{color:'#1F75FE', margin:'0'}}>New Users</h2>
                   <div style={{ overflowY: "auto", flex: 1 }}>
                     <List
                       itemLayout="horizontal"
@@ -74,7 +91,7 @@ const Stats = () => {
                                 }}
                               />
                             }
-                            title={<strong>{user.name}</strong>}
+                            title={<strong style={{fontWeight:'bold'}}>{user.name}</strong>}
                             description={user.email}
                           />
                         </List.Item>
@@ -86,51 +103,19 @@ const Stats = () => {
             </Row>
 
             <Row gutter={[16, 16]} style={{ width: "100%", marginTop: "20px" }}>
-              <Col xs={24} md={12} lg={8}>
-                <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
-                  Pie Chart( Categories wise items)
-                  <PieChartView/>
-                </Card>
-              </Col>
-              
-              
-              <Col xs={24} md={24} lg={8}>
-                <Card style={{ height: "300px",  backgroundColor: "#F0F8FF" }}>
-                    Donation
-                    <DonationDonutChart/>
-                </Card>
-              </Col>
 
-
-              <Col xs={24} md={12} lg={8}>
+            <Col xs={24} md={12} lg={8}>
                 <Card
-                  style={{ height: "300px", overflowY: "auto",  backgroundColor: "#F0F8FF"  }}
-                  title={<h3 style={{ margin: 0 }}>Items</h3>}
-                >
+                  style={{ height: "300px", overflowY: "auto",  backgroundColor: "#F0F8FF"  }}>
+                    <h2 style={{color:'#1F75FE', margin:'0'}}>Categories</h2>
                   <div style={{ overflowY: "auto", flex: 1 }}>
                     <List
                       itemLayout="horizontal"
-                      dataSource={latestUsers}
-                      renderItem={(user) => (
+                      dataSource={categories}
+                      renderItem={(category) => (
                         <List.Item>
                           <List.Item.Meta
-                            avatar={
-                              <img
-                                src={
-                                  user.picture ||
-                                  "https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png"
-                                }
-                                alt="profile"
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: "50%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            }
-                            title={<strong>{user.name}</strong>}
-                            description={user.email}
+                            title={<strong style={{fontWeight:'bold'}}>{category.name}</strong>}
                           />
                         </List.Item>
                       )}
@@ -138,6 +123,22 @@ const Stats = () => {
                   </div>
                 </Card>
               </Col>
+              
+              <Col xs={24} md={12} lg={8}>
+                <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Item Distribution</h2>
+                  <PieChartView/>
+                </Card>
+              </Col>
+              
+              
+              <Col xs={24} md={24} lg={8}>
+                <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"}}>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>Donation</h2>
+                    <DonationDonutChart/>
+                </Card>
+              </Col>
+
             </Row>
     </div>
   )
