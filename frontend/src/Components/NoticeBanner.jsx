@@ -26,16 +26,6 @@ const NoticeBanner = () => {
         <div>
             <Spin spinning={loading} tip="Loading Dashboard...">
                 <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                    <Card
-                        style={{
-                            width: "100%",
-                            height: "230px",
-                            padding: 0,
-                            margin: 0,
-                            overflow: "hidden",
-                        }}
-                        bodyStyle={{ padding: 0 }}
-                    >
                         <Carousel autoplay autoplaySpeed={3000} effect="fade">
                             {banners.map((banner) => (
                                 <div key={banner._id}>
@@ -44,7 +34,7 @@ const NoticeBanner = () => {
                                         alt="banner"
                                         style={{
                                             width: "100%",
-                                            height: "230px",
+                                            height: "450px",
                                             objectFit: "cover",
                                             display: "block",
                                         }}
@@ -52,7 +42,6 @@ const NoticeBanner = () => {
                                 </div>
                             ))}
                         </Carousel>
-                    </Card>
                 </Space>
             </Spin>
         </div>

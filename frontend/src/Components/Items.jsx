@@ -54,19 +54,7 @@ const Items = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const fetchItems = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const data = await moment.getAllUsers();
-  //     setItems(data);
-  //     setFilteredData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     message.error("Failed to load data.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+
 
   useEffect(() => {
     fetchItems();
