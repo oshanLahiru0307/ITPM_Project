@@ -123,7 +123,7 @@ const Stats = () => {
                   </div>
                 </Card>
               </Col>
-              
+
               <Col xs={24} md={12} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"  }}>
                 <h2 style={{color:'#1F75FE', margin:'0'}}>Item Distribution</h2>
@@ -134,7 +134,7 @@ const Stats = () => {
               
               <Col xs={24} md={24} lg={8}>
                 <Card style={{ height: "300px",  backgroundColor: "#F0F8FF"}}>
-                <h2 style={{color:'#1F75FE', margin:'0'}}>Donation</h2>
+                <h2 style={{color:'#1F75FE', margin:'0'}}>All Donation</h2>
                     <DonationDonutChart/>
                 </Card>
               </Col>

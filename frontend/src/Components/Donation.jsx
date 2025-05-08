@@ -79,7 +79,7 @@ const Donation = () => {
   };
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#F0F8FF", minHeight: "100vh" }}>
+    <div style={{ padding: "20px", backgroundColor: "#FFFFFF", minHeight: "100vh" }}>
       <Card
         hoverable
         extra={
@@ -87,7 +87,7 @@ const Donation = () => {
             + Add Donation
           </Button>
         }
-        style={{ width: "100%", minHeight: "663px" }}
+        style={{ width: "100%", minHeight: "663px", background:'#F0F8FF' }}
         title={<h3 style={{ color: "#007FFF" }}>Donation</h3>}
         tabList={tabList}
         activeTabKey={activeTabKey1}

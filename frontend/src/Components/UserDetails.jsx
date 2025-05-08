@@ -173,13 +173,13 @@ const UserDetails = () => {
     <div
       style={{
         padding: "20px",
-        backgroundColor: "#F0F8FF",
+        backgroundColor: "#FFFFFF",
         minHeight: "100vh",
       }}
     >
       <Card
         hoverable
-        style={{ width: "100%", height: "663px" }}
+        style={{ width: "100%", height: "663px", background:'#F0F8FF' }}
         title={<h3 style={{ color: "#007FFF" }}>All Users</h3>}
       >
         <Row gutter={[16, 16]} justify="space-between" align="middle">

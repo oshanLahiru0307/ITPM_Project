@@ -162,10 +162,10 @@ const Categories = () => {
   ];
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#F0F8FF', minHeight: '100vh' }}>
+    <div style={{ padding: '20px', backgroundColor: '#FFFFFF', minHeight: '100vh' }}>
       <Card
         hoverable
-        style={{ width: '100%', height: '663px' }}
+        style={{ width: '100%', height: '663px', background:'#F0F8FF' }}
         title={<h3 style={{ color: '#007FFF' }}>Categories</h3>}
         extra={<Button type='primary' style={{ float: 'right' }} onClick={() => setModalVisible(true)}>+ Add Category</Button>}
       >

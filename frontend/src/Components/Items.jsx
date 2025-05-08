@@ -54,7 +54,19 @@ const Items = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
+  // const fetchItems = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const data = await moment.getAllUsers();
+  //     setItems(data);
+  //     setFilteredData(data);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     message.error("Failed to load data.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     fetchItems();
@@ -313,13 +325,13 @@ const Items = () => {
     <div
       style={{
         padding: "20px",
-        backgroundColor: "#F0F8FF",
+        backgroundColor: "#FFFFFF",
         minHeight: "100vh",
       }}
     >
       <Card
         hoverable
-        style={{ width: "100%", height: "663px" }}
+        style={{ width: "100%", height: "663px", background:'#F0F8FF' }}
         title={<h3 style={{ color: "#007FFF" }}>Items</h3>}
         extra={
           <Button type="primary" onClick={() => setModalVisible(true)}>

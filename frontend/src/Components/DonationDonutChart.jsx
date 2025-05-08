@@ -72,7 +72,7 @@ const DonationDonutChart = () => {
       {
         type: 'text',
         style: {
-          text: 'Donation\nCharts',
+          text: 'Donation\nChart',
           x: '50%',
           y: '50%',
           textAlign: 'center',
