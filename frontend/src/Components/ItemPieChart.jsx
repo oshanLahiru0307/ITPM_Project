@@ -63,16 +63,8 @@ const ItemPieChart = () => {
     legend: {
       color: {
         title: false,
-        position: 'right',
+        position: 'top',
         rowPadding: 5,
-      },
-    },
-    title: { // Add this title property
-      text: 'Distribution of Items by Category', // Your chart title
-      style: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center', // Optional: center the title
       },
     },
   };
@@ -80,7 +72,7 @@ const ItemPieChart = () => {
   return <div
   style={{
     width:'300px',
-    height:'300px',
+    height:'250px',
   }}>
     <Pie {...config} />
   </div>;

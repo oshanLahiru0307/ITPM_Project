@@ -64,7 +64,7 @@ const DonationDonutChart = () => {
     legend: {
       color: {
         title: false,
-        position: 'right',
+        position: 'top',
         rowPadding: 5,
       },
     },
@@ -86,7 +86,7 @@ const DonationDonutChart = () => {
   return <div
   style={{
     width:'300px',
-    height:'300px',
+    height:'240px',
   }}>
     <Pie {...config} />
   </div>;

@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Card } from "antd";
 import NoticeBanner from "./NoticeBanner";
 import UserList from "./UserList";
-import BarChartView from './ItemBarChart'
-import PieChartView from './ItemPieChart'
-import DonationDonutChart from "./DonationDonutChart";
+
+
+
+import Stats from "./Stats";
 const tabList = [
   { key: "NoticeBanner", tab: "Notices" },
-  { key: "Stats", tab: "Stats" },
+  { key: "Stats", tab: "Statistics" },
 ];
 
 const Home = () => {
@@ -31,18 +32,7 @@ const Home = () => {
         onTabChange={onTab1Change}
         
       >
-        {activeTabKey1 === "NoticeBanner" ? <NoticeBanner /> : 
-        <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-        }}>
-          <BarChartView/>
-          <PieChartView/>
-          <DonationDonutChart/>
-        </div> }
+        {activeTabKey1 === "NoticeBanner" ? <NoticeBanner /> : <Stats />}
       </Card>
     </div>
   );
