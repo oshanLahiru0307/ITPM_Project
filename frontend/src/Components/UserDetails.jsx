@@ -14,6 +14,8 @@ import {
 } from "antd";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import moment from "moment";
+import PDF_Logo from "../assets/inventory_11000621.png";
 
 const { Search } = Input;
 
@@ -110,8 +112,31 @@ const UserDetails = () => {
   };
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-    doc.text("User Report", 14, 10);
+   const doc = new jsPDF();
+       const pageWidth = doc.internal.pageSize.getWidth(); // <--- PASTE YOUR BASE64 STRING HERE
+   
+       // Add logo
+       const imgWidth = 30;
+       // You might need to adjust the height based on your logo's aspect ratio
+       const imgHeight = 15;
+       const imgX = (pageWidth - imgWidth) / 2; // Center horizontally
+       doc.addImage(PDF_Logo, 'PNG', imgX, 10, imgWidth, imgHeight);
+   
+       // Add title
+       const title = 'Home Stock';
+       doc.setFontSize(18);
+       const titleWidth = doc.getTextWidth(title);
+       const titleX = (pageWidth - titleWidth) / 2; // Center horizontally
+       doc.text(title, titleX, 10 + imgHeight + 5);
+   
+       // Add subtitle
+       doc.setFontSize(14);
+       doc.text('User Detail Report', 14, 10 + imgHeight + 12 + 7); // Adjusted Y position
+   
+       // Add download date
+       doc.setFontSize(10);
+       doc.text(`Downloaded on: ${moment().format('YYYY-MM-DD')}`, pageWidth - 14, 15, { align: "right" });
+
     const columns = ["#", "Name", "Email", "Phone", "Address"];
 
     const sortedData = [...filteredData].sort((a, b) => {
@@ -133,7 +158,7 @@ const UserDetails = () => {
     autoTable(doc, {
       head: [columns],
       body: rows,
-      startY: 20,
+      startY: 10 + imgHeight + 15 + 7,
     });
     doc.save("User_Report.pdf");
   };
@@ -173,13 +198,13 @@ const UserDetails = () => {
     <div
       style={{
         padding: "20px",
-        backgroundColor: "#F0F8FF",
+        backgroundColor: "#FFFFFF",
         minHeight: "100vh",
       }}
     >
       <Card
         hoverable
-        style={{ width: "100%", height: "663px" }}
+        style={{ width: "100%", height: "663px", background:'#F0F8FF' }}
         title={<h3 style={{ color: "#007FFF" }}>All Users</h3>}
       >
         <Row gutter={[16, 16]} justify="space-between" align="middle">

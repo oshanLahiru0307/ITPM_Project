@@ -1,34 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Card, Space, List, Carousel, Row, Col, Spin } from "antd";
-import BannerController from "../Services/BannerController";
-import UserController from "../Services/UserController";
+import React, { useState } from "react";
+import { Card } from "antd";
+import NoticeBanner from "./NoticeBanner";
+import Stats from "./Stats";
+
+/*const tabList = [
+  { key: "NoticeBanner", tab: "Notices" },
+  { key: "Stats", tab: "Statistics" },
+];*/
 
 const Home = () => {
-  const [latestUsers, setLatestUsers] = useState([]);
-  const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const users = await UserController.getAllUsers();
-        const sortedUsers = [...users].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        setLatestUsers(sortedUsers.slice(0, 5));
-
-        const bannerData = await BannerController.getBanners();
-        setBanners(bannerData);
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  //const [activeTabKey1, setActiveTabKey1] = useState("NoticeBanner");
+  //const onTab1Change = (key) => setActiveTabKey1(key);
   return (
     <div
       style={{
@@ -40,88 +23,15 @@ const Home = () => {
       <Card
         hoverable={true}
         title={<h3 style={{ color: "#007FFF" }}>Home</h3>}
-        style={{ minHeight: "663px" }}
+        style={{ minHeight: "663px"}}
+        //tabList={tabList}
+        //activeTabKey={activeTabKey1}
+        //onTabChange={onTab1Change}
+        
       >
-        <Spin spinning={loading} tip="Loading Dashboard...">
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Card
-              style={{
-                width: "100%",
-                height: "230px",
-                padding: 0,
-                margin: 0,
-                overflow: "hidden",
-              }}
-              bodyStyle={{ padding: 0 }}
-            >
-              <Carousel autoplay autoplaySpeed={3000} effect="fade">
-                {banners.map((banner) => (
-                  <div key={banner._id}>
-                    <img
-                      src={banner.image}
-                      alt="banner"
-                      style={{
-                        width: "100%",
-                        height: "230px",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                  </div>
-                ))}
-              </Carousel>
-            </Card>
-
-            <Row gutter={[16, 16]} style={{ width: "100%" }}>
-              <Col xs={24} md={12} lg={8}>
-                <Card style={{ height: "300px" }}>
-                  Pie Chart( Categories wise items)
-                </Card>
-              </Col>
-
-              <Col xs={24} md={12} lg={8}>
-                <Card
-                  style={{ height: "300px", overflowY: "auto" }}
-                  title={<h3 style={{ margin: 0 }}>New Users</h3>}
-                >
-                  <div style={{ overflowY: "auto", flex: 1 }}>
-                    <List
-                      itemLayout="horizontal"
-                      dataSource={latestUsers}
-                      renderItem={(user) => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={
-                              <img
-                                src={
-                                  user.picture ||
-                                  "https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png"
-                                }
-                                alt="profile"
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: "50%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            }
-                            title={<strong>{user.name}</strong>}
-                            description={user.email}
-                          />
-                        </List.Item>
-                      )}
-                    />
-                  </div>
-                </Card>
-              </Col>
-
-              <Col xs={24} md={24} lg={8}>
-                <Card style={{ height: "300px" }}>New Items</Card>
-              </Col>
-            </Row>
-          </Space>
-        </Spin>
+        {/*activeTabKey1 === "NoticeBanner" ? <NoticeBanner /> : <Stats />*/}
+        <NoticeBanner />
+        <Stats />
       </Card>
     </div>
   );

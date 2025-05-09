@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import dayjs from "dayjs";
 import {
   Button,
   message,
@@ -14,8 +15,9 @@ import {
   Row,
   Col,
   Spin,
+  Popconfirm,
 } from "antd";
-import { EditOutlined, DeleteOutlined, GiftOutlined } from "@ant-design/icons"; // Import icons
+import { EditOutlined, DeleteOutlined, GiftOutlined } from "@ant-design/icons";
 import itemController from "../Services/ItemController";
 import categoryController from "../Services/CategoryController";
 import DonationController from "../Services/DonationController";
@@ -23,7 +25,7 @@ import state from "../State/state";
 import { useSnapshot } from "valtio";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import dayjs from "dayjs";
+import PDF_Logo from "../assets/inventory_11000621.png";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -54,20 +56,6 @@ const Items = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const fetchItems = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const data = await moment.getAllUsers();
-  //     setItems(data);
-  //     setFilteredData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     message.error("Failed to load data.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   useEffect(() => {
     fetchItems();
     fetchCategories();
@@ -83,9 +71,9 @@ const Items = () => {
     } catch (error) {
       console.error(error);
       message.error("Failed to load data.");
-    }finally {
-       setLoading(false);
-       }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchCategories = async () => {
@@ -186,7 +174,30 @@ const Items = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text("Item Report", 14, 10);
+    const pageWidth = doc.internal.pageSize.getWidth(); // <--- PASTE YOUR BASE64 STRING HERE
+
+    // Add logo
+    const imgWidth = 30;
+    // You might need to adjust the height based on your logo's aspect ratio
+    const imgHeight = 15;
+    const imgX = (pageWidth - imgWidth) / 2; // Center horizontally
+    doc.addImage(PDF_Logo, 'PNG', imgX, 10, imgWidth, imgHeight);
+
+    // Add title
+    const title = 'Home Stock';
+    doc.setFontSize(18);
+    const titleWidth = doc.getTextWidth(title);
+    const titleX = (pageWidth - titleWidth) / 2; // Center horizontally
+    doc.text(title, titleX, 10 + imgHeight + 5);
+
+    // Add subtitle
+    doc.setFontSize(14);
+    doc.text('Item Report', 14, 10 + imgHeight + 12 + 7); // Adjusted Y position
+
+    // Add download date
+    doc.setFontSize(10);
+    doc.text(`Downloaded on: ${moment().format('YYYY-MM-DD')}`, pageWidth - 14, 15, { align: "right" });
+
     const columns = [
       "#",
       "Name",
@@ -221,14 +232,14 @@ const Items = () => {
       item.price,
       item.category,
       item.qty,
-      new Date(item.mfd).toLocaleDateString(),
-      new Date(item.expd).toLocaleDateString(),
+      item.mfd ? new Date(item.mfd).toLocaleDateString() : "",
+      item.expd ? new Date(item.expd).toLocaleDateString() : "",
     ]);
 
     autoTable(doc, {
       head: [columns],
       body: rows,
-      startY: 20,
+      startY: 10 + imgHeight + 15 + 7, // Adjusted startY
     });
     doc.save("Item_Report.pdf");
   };
@@ -242,51 +253,51 @@ const Items = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.description.localeCompare(b.description),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.category.localeCompare(b.category),
     },
     {
       title: "Qty",
       dataIndex: "qty",
       key: "qty",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => a.qty - b.qty,
     },
     {
       title: "Manufacturing Date",
       dataIndex: "mfd",
       key: "mfd",
-      sorter: (a, b) => (moment(a.mfd).isBefore(moment(b.mfd)) ? -1 : 1),
+      sorter: (a, b) => (a.mfd && b.mfd ? moment(a.mfd).valueOf() - moment(b.mfd).valueOf() : 0),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
       title: "Expiry Date",
       dataIndex: "expd",
       key: "expd",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => (a.expd && b.expd ? moment(a.expd).valueOf() - moment(b.expd).valueOf() : 0),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
       title: "Added Date",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      sorter: (a, b) => (moment(a.expd).isBefore(moment(b.expd)) ? -1 : 1),
+      sorter: (a, b) => moment(a.updatedAt).valueOf() - moment(b.updatedAt).valueOf(),
       render: (text) => (text ? moment(text).format("YYYY-MM-DD") : ""),
     },
     {
@@ -301,14 +312,16 @@ const Items = () => {
           >
             Edit
           </Button>
-          <Button
-            type="primary"
-            danger
-            style={{ marginRight: "5px" }}
-            onClick={() => handleDeleteItem(record._id)}
+          <Popconfirm
+            title="Are you sure you want to delete this item?"
+            onConfirm={() => handleDeleteItem(record._id)}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </Button>
+            <Button type="primary" danger style={{ marginRight: "5px" }}>
+              Delete
+            </Button>
+          </Popconfirm>
           <Button
             type="primary"
             style={{ background: "#5CD85A" }}
@@ -325,13 +338,13 @@ const Items = () => {
     <div
       style={{
         padding: "20px",
-        backgroundColor: "#F0F8FF",
+        backgroundColor: "#FFFFFF",
         minHeight: "100vh",
       }}
     >
       <Card
         hoverable
-        style={{ width: "100%", height: "663px" }}
+        style={{ width: "100%", height: "663px", background: "#F0F8FF" }}
         title={<h3 style={{ color: "#007FFF" }}>Items</h3>}
         extra={
           <Button type="primary" onClick={() => setModalVisible(true)}>
@@ -366,14 +379,14 @@ const Items = () => {
           </Col>
         </Row>
         <Spin spinning={loading} tip="Loading Items...">
-        <Table
-          dataSource={filteredData}
-          columns={columns}
-          rowKey="_id"
-          pagination={{ pageSize: 6 }}
-          onChange={handleTableChange}
-          scroll={{ x: "max-content" }}
-        />
+          <Table
+            dataSource={filteredData}
+            columns={columns}
+            rowKey="_id"
+            pagination={{ pageSize: 6 }}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
         </Spin>
         {/* Add/Edit Modal */}
         <Modal
@@ -483,21 +496,21 @@ const Items = () => {
         >
           <Form form={donateForm} layout="vertical">
             <Form.Item
-              name="qty"
-              label="Quantity to Donate"
-              rules={[{ required: true }]}
-            >
-              <InputNumber
-                min={1}
-                max={selectedItem?.qty || 1}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Card>
-    </div>
-  );
+            name="qty"
+            label="Quantity to Donate"
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              min={1}
+              max={selectedItem?.qty || 1}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Card>
+  </div>
+);
 };
 
 export default Items;

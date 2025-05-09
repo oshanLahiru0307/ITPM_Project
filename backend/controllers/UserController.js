@@ -37,7 +37,7 @@ const addUser = async (req,res)=> {
             res.status(200).json(response)
         }
         else{
-            res.status(402).json({error: "user email is already exist!!!."}) 
+            res.status(402).json({error: "user email is already exist."}) 
         }
     }catch(error){
         res.status(400).json({error: error})
@@ -52,7 +52,7 @@ const updateUser = async (req,res)=> {
         res.status(200).json(response)
     }catch(error){
         res.status(400).json({error: error})
-        console.log("print error",error)
+        console.log("error while updating",error)
     }
 }
 
@@ -75,11 +75,11 @@ const loginUser = async (req, res)=> {
     try{
         const user = await UserSchema.findOne({email:email})
         if(!user){
-           return res.status(400).json({mssg:"user name is wrong..."})
+           return res.status(400).json({mssg:"user name is wrong"})
         }
         const matchUser = await bcrypt.compare(password,user.password)
         if(!matchUser){
-        return res.status(400).json({mssg:"password is wrong..."}) 
+        return res.status(400).json({mssg:"password is wrong"}) 
         }
         const token = jwttoken.sign({id:user._id}, process.env.SECRET_KEY)
         delete user.password

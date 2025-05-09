@@ -34,11 +34,11 @@ const Dashbord = () => {
 
   return (
     <Layout  style={{ minHeight: '100vh' }}>
-      <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider theme='dark' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} >
         <Title
           level={3}
           style={{
-            color: '#007FFF',
+            color: '#ffffff',//#007FFF
             textAlign: 'center',
             marginBottom: '30px' // Increased gap below title
           }}
@@ -46,7 +46,7 @@ const Dashbord = () => {
           Home Stock
         </Title>
 
-        <Menu theme='light' defaultSelectedKeys={['0']} mode="inline">
+        <Menu theme='dark' defaultSelectedKeys={['0']} mode="inline" style={{position:'sticky', top: '0'}}>
           <Menu.Item
             key="0"
             icon={<HomeOutlined/>}

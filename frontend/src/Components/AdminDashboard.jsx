@@ -13,7 +13,7 @@ import {
 import state from '../State/state';
 import { useSnapshot } from 'valtio';
 import { useNavigate } from 'react-router-dom';
-import Home from '../Components/Home'
+import AdminHome from '../Components/AdminHome'
 import Items from '../Components/Items'
 import AdminCategories from '../adminComponents/AdminCategories'
 import AdminDonation from '../adminComponents/AdminAllDonation';
@@ -37,11 +37,11 @@ const AdminDashbord = () => {
 
   return (
     <Layout  style={{ minHeight: '100vh' }}>
-      <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider theme='dark' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <Title
           level={3}
           style={{
-            color: '#007FFF',
+            color: '#FFFFFF',
             textAlign: 'center',
             marginBottom: '30px' // Increased gap below title
           }}
@@ -49,7 +49,7 @@ const AdminDashbord = () => {
           Home Stock
         </Title>
 
-        <Menu theme='light' defaultSelectedKeys={['0']} mode="inline">
+        <Menu theme='dark' defaultSelectedKeys={['0']} mode="inline">
           <Menu.Item
             key="0"
             icon={<HomeOutlined/>}
@@ -90,24 +90,17 @@ const AdminDashbord = () => {
           >
             Donation
           </Menu.Item>
+
           <Menu.Item
             key="5"
-            icon={<ProfileOutlined />}
-            onClick={() => { state.activeIndex = 5; }}
-            style={{ marginBottom: "15px" }}
-          >
-            Profile
-          </Menu.Item>
-          <Menu.Item
-            key="6"
             icon={<AppstoreAddOutlined />}
-            onClick={() => { state.activeIndex = 6; }}
+            onClick={() => { state.activeIndex = 5; }}
             style={{ marginBottom: "15px" }}
           >
             Add Banner
           </Menu.Item>
           <Menu.Item
-            key="7"
+            key="6"
             icon={<LogoutOutlined />}
             onClick={() => { 
               state.currentUser = null
@@ -125,13 +118,12 @@ const AdminDashbord = () => {
 
       <Layout>
         <Content>
-          {snap.activeIndex === 0 && <Home/>}
+          {snap.activeIndex === 0 && <AdminHome/>}
           {snap.activeIndex === 1 && <AdminItems/>}
           {snap.activeIndex === 2 && <AdminCategories/>}
           {snap.activeIndex === 3 && <AdminUserView/>}
           {snap.activeIndex === 4 && <AdminDonation/>}
-          {snap.activeIndex === 5 && <Profile/>}
-          {snap.activeIndex === 6 && <AdminBanerAdd/>}
+          {snap.activeIndex === 5 && <AdminBanerAdd/>}
 
         </Content>
       </Layout>

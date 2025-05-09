@@ -14,7 +14,7 @@ const storedToken = localStorage.getItem("token") || null;
 const state = proxy({
   currentUser: storedUser,
   token: storedToken,
-  activeIndex: -1,
+  activeIndex: 0,
   categories: [],
   users: [],
   items: [],
