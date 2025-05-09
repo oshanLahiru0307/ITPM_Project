@@ -21,7 +21,7 @@ import moment from "moment";
 import state from "../State/state.js";
 import DonationController from "../Services/DonationController";
 import CategoryController from "../Services/CategoryController";
-
+import PDF_Logo from "../assets/inventory_11000621.png";
 const { Search } = Input;
 
 const MyDonations = ({ refresh }) => {
@@ -101,7 +101,30 @@ const MyDonations = ({ refresh }) => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text("My Donation Report", 14, 10);
+    const pageWidth = doc.internal.pageSize.getWidth(); // <--- PASTE YOUR BASE64 STRING HERE
+
+    // Add logo
+    const imgWidth = 30;
+    // You might need to adjust the height based on your logo's aspect ratio
+    const imgHeight = 15;
+    const imgX = (pageWidth - imgWidth) / 2; // Center horizontally
+    doc.addImage(PDF_Logo, 'PNG', imgX, 10, imgWidth, imgHeight);
+
+    // Add title
+    const title = 'Home Stock';
+    doc.setFontSize(18);
+    const titleWidth = doc.getTextWidth(title);
+    const titleX = (pageWidth - titleWidth) / 2; // Center horizontally
+    doc.text(title, titleX, 10 + imgHeight + 5);
+
+    // Add subtitle
+    doc.setFontSize(14);
+    doc.text('My Donation Report', 14, 10 + imgHeight + 12 + 7); // Adjusted Y position
+
+    // Add download date
+    doc.setFontSize(10);
+    doc.text(`Downloaded on: ${moment().format('YYYY-MM-DD')}`, pageWidth - 14, 15, { align: "right" });
+
     const columns = [
       "#",
       "Name",
@@ -133,7 +156,7 @@ const MyDonations = ({ refresh }) => {
     autoTable(doc, {
       head: [columns],
       body: rows,
-      startY: 20,
+      startY: 10 + imgHeight + 15 + 7,
     });
     doc.save("My_Donation_Report.pdf");
   };
