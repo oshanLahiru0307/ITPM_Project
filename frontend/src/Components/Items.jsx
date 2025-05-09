@@ -36,7 +36,7 @@ const Items = () => {
     }
   };
 
-  const handleAddOrUpdateItem = async (values) => {
+  const handleAddOrUpdateItem = async (values) => {  // adding and updating items and passing message
     try {
       const formattedValues = {
         ...values,
