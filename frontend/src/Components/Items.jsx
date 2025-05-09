@@ -163,7 +163,7 @@ const Items = () => {
 
           <Form.Item name="qty" label="Quantity" rules={[{ required: true, message: 'Please enter quantity' }]}>
             <InputNumber min={0} style={{ width: '100%' }} />
-          </Form.Item>
+          </Form.Item>      
 
           <Form.Item name="mfd" label="Manufacturing Date">
             <DatePicker style={{ width: '100%' }} />
@@ -171,13 +171,13 @@ const Items = () => {
 
           <Form.Item
             name="expd"
-            label="Expiry Date"
+            label="Expiry Date"     // conditions for expiration date , after manufacutred date
             dependencies={['mfd']}
             rules={[
               ({ getFieldValue }) => ({
-                validator(_, value) {
+                validator(_, value) {      //validate the input
                   const mfd = getFieldValue('mfd');
-                  if (!value || !mfd || value.isAfter(mfd)) {
+                  if (!value || !mfd || value.isAfter(mfd)) {   // checking conditions
                     return Promise.resolve();
                   }
                   return Promise.reject(new Error('Expiry date must be after manufacturing date'));
